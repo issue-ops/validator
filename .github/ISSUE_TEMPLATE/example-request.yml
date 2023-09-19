@@ -1,0 +1,199 @@
+name: Example Request
+description: Submit an example request
+title: '[Request] New Thing'
+labels:
+  - issueops:new-thing
+assignees:
+  - ncalteen
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Hello, World!
+
+        This is an example issue form. It includes several input fields.
+
+        The fields will be validated after they are parsed.
+
+        This markdown is not included in the final issue body.
+
+  # Example of a required input field
+  - type: input
+    id: name
+    attributes:
+      label: The Name of the Thing
+      description: The name of the thing you want to create.
+      placeholder: this-is-the-thing
+    validations:
+      required: true
+
+  # Example of an optional input field
+  - type: input
+    id: nickname
+    attributes:
+      label: The Nickname of the Thing
+      description: (Optional) The nickname of the thing you want to create.
+      placeholder: the-thing
+    validations:
+      required: false
+
+  # Example of a required dropdown field
+  - type: dropdown
+    id: color
+    attributes:
+      label: The Color of the Thing
+      description: The color of the thing you want to create.
+      multiple: false
+      options:
+        - blue
+        - black
+        - green
+        - orange
+        - purple
+        - red
+        - white
+        - yellow
+    validations:
+      required: true
+
+  # Example of an optional dropdown field
+  - type: dropdown
+    id: shape
+    attributes:
+      label: The Shape of the Thing
+      description: (Optional) The shape of the thing you want to create.
+      multiple: false
+      options:
+        - circle
+        - square
+        - triangle
+    validations:
+      required: false
+
+  # Example of a required dropdown field with multiple selections
+  - type: dropdown
+    id: sounds
+    attributes:
+      label: The Sounds of the Thing
+      description: (Multiple) The sounds(s) the thing makes.
+      multiple: true
+      options:
+        - do
+        - re
+        - mi
+        - fa
+        - so
+        - la
+        - ti
+    validations:
+      required: true
+
+  # Example of an optional dropdown field with multiple selections
+  - type: dropdown
+    id: topics
+    attributes:
+      label: The Topics About the Thing
+      description: |
+        (Multiple / Optional) The topic(s) about the thing you want to create.
+      multiple: true
+      options:
+        - cool
+        - fun
+        - interesting
+        - neat
+    validations:
+      required: false
+
+  # Example of a required textarea field
+  - type: textarea
+    id: description
+    attributes:
+      label: The Description of the Thing
+      description: The description of the thing you want to create.
+      placeholder: This is a description of the thing.
+    validations:
+      required: true
+
+  # Example of an optional textarea field
+  - type: textarea
+    id: notes
+    attributes:
+      label: The Notes About the Thing
+      description: (Optional) The notes about the thing you want to create.
+      placeholder: These are notes about the thing.
+    validations:
+      required: false
+
+  # Example of a required textarea field with code rendering
+  - type: textarea
+    id: code
+    attributes:
+      label: The Code of the Thing
+      description: The code of the thing you want to create.
+      render: JavaScript
+      placeholder: |
+        const thing = new Thing()
+        thing.doSomething()
+    validations:
+      required: true
+
+  # Example of an optional textarea field with code rendering
+  - type: textarea
+    id: code-string
+    attributes:
+      label: The String Method of the Code of the Thing
+      description: (Optional) The method to return the thing as a string.
+      render: JavaScript
+      placeholder: |
+        thing.toString()
+    validations:
+      required: false
+
+  # Example of a required checkbox field
+  - type: checkboxes
+    id: is-thing
+    attributes:
+      label: Is the Thing a Thing?
+      description: Is the thing a thing?
+      options:
+        - label: Yes
+          required: true
+        - label: No
+          required: false
+
+  # Example of an optional checkbox field
+  - type: checkboxes
+    id: is-thing-useful
+    attributes:
+      label: Is the Thing Useful?
+      description: (Optional) Is the thing a useful thing?
+      options:
+        - label: Yes
+          required: false
+        - label: Sometimes
+          required: false
+        - label: No
+          required: false
+
+  # Example of a field with non-built-in validation
+  - type: input
+    id: read-team
+    attributes:
+      label: Read Team
+      description: |
+        The read-only GitHub Team (hint: `IssueOps-Demo-Readers`).
+      placeholder: IssueOps-Demo-Readers
+    validations:
+      required: true
+
+  # Example of a field with non-built-in validation
+  - type: input
+    id: write-team
+    attributes:
+      label: Write Team
+      description: |
+        The write-access GitHub Team (hint: `IssueOps-Demo-Writers`).
+      placeholder: IssueOps-Demo-Writers
+    validations:
+      required: true

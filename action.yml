@@ -1,0 +1,16 @@
+name: IssueOps Validator
+description: Validate issue form submissions
+author: Nick Alteen
+
+branding:
+  icon: check-square
+  color: blue
+
+inputs:
+  issue-form-template:
+    description: The issue form template file name (e.g. `new-repository.yml`)
+    required: true
+
+runs:
+  using: node20
+  main: dist/index.js
