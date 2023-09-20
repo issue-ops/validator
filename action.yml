@@ -10,6 +10,12 @@ inputs:
   issue-form-template:
     description: The issue form template file name (e.g. `new-repository.yml`)
     required: true
+  workspace:
+    default: ${{ github.workspace }}
+    description:
+      The path where the repository has been cloned using the `actions/checkout`
+      step. This is required to find the issue form template file.
+    required: true
 
 runs:
   using: node20
