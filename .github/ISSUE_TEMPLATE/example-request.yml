@@ -131,7 +131,7 @@ body:
     attributes:
       label: The Code of the Thing
       description: The code of the thing you want to create.
-      render: JavaScript
+      render: js
       placeholder: |
         const thing = new Thing()
         thing.doSomething()
@@ -144,7 +144,7 @@ body:
     attributes:
       label: The String Method of the Code of the Thing
       description: (Optional) The method to return the thing as a string.
-      render: JavaScript
+      render: js
       placeholder: |
         thing.toString()
     validations:
