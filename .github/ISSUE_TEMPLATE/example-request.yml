@@ -157,9 +157,9 @@ body:
       label: Is the Thing a Thing?
       description: Is the thing a thing?
       options:
-        - label: Yes
+        - label: 'Yes'
           required: true
-        - label: No
+        - label: 'No'
           required: false
 
   # Example of an optional checkbox field
@@ -169,11 +169,11 @@ body:
       label: Is the Thing Useful?
       description: (Optional) Is the thing a useful thing?
       options:
-        - label: Yes
+        - label: 'Yes'
           required: false
         - label: Sometimes
           required: false
-        - label: No
+        - label: 'No'
           required: false
 
   # Example of a field with non-built-in validation
