@@ -15,14 +15,18 @@ export async function run(): Promise<void> {
   const workspace: string = core.getInput('workspace', { required: true })
 
   // Verify the template exists
-  if (!fs.existsSync(`${workspace.replace(/\/+$/, '')}/${template}`)) {
+  if (
+    !fs.existsSync(
+      `${workspace.replace(/\/+$/, '')}/.github/ISSUE_TEMPLATE/${template}`
+    )
+  ) {
     core.setFailed(`Template not found: ${template}`)
     return
   }
 
   // Read and parse the template
   const templateYaml: IssueFormTemplate = YAML.parse(
-    fs.readFileSync(`${workspace}/${template}`, 'utf8')
+    fs.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8')
   )
   await parseTemplate(templateYaml)
 }

@@ -2798,12 +2798,12 @@ async function run() {
     });
     const workspace = core.getInput('workspace', { required: true });
     // Verify the template exists
-    if (!fs_1.default.existsSync(`${workspace.replace(/\/+$/, '')}/${template}`)) {
+    if (!fs_1.default.existsSync(`${workspace.replace(/\/+$/, '')}/.github/ISSUE_TEMPLATE/${template}`)) {
         core.setFailed(`Template not found: ${template}`);
         return;
     }
     // Read and parse the template
-    const templateYaml = yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/${template}`, 'utf8'));
+    const templateYaml = yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8'));
     await (0, parse_1.parseTemplate)(templateYaml);
 }
 exports.run = run;
