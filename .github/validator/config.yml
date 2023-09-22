@@ -1,0 +1,10 @@
+# IssueOps Validator Configuration
+# See: https://github.com/issue-ops/validator
+
+validators:
+  - field: read_team
+    script: team
+    method: exists
+  - field: write_team
+    script: team
+    method: exists
