@@ -2782,7 +2782,7 @@ async function run() {
     // Read and parse the template
     const parsedTemplate = await (0, parse_1.parseTemplate)(yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8')));
     // Validate the parsed issue against the template
-    const errors = await (0, validate_1.validate)(parsedTemplate, parsedIssue);
+    const errors = await (0, validate_1.validate)(parsedTemplate, parsedIssue, workspace);
     console.log(errors);
 }
 exports.run = run;
@@ -2867,12 +2867,17 @@ exports.parseTemplate = parseTemplate;
 /***/ }),
 
 /***/ 4953:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.validate = void 0;
+const fs_1 = __importDefault(__nccwpck_require__(7147));
+const yaml_1 = __importDefault(__nccwpck_require__(4083));
 const input_1 = __nccwpck_require__(4823);
 const textarea_1 = __nccwpck_require__(1228);
 const dropdown_1 = __nccwpck_require__(7229);
@@ -2881,9 +2886,10 @@ const checkboxes_1 = __nccwpck_require__(4464);
  * Validates the parsed issue body against the parsed issue form template
  * @param template The parsed issue form template
  * @param issue The parsed issue body
+ * @param workspace The path to the workspace
  * @returns A list of errors (empty list means the issue is valid)
  */
-async function validate(template, issue) {
+async function validate(template, issue, workspace) {
     const errors = [];
     for (const [key, props] of Object.entries(template)) {
         // Type-specific validations
@@ -2899,7 +2905,21 @@ async function validate(template, issue) {
         else if (props.type === 'checkboxes') {
             (0, checkboxes_1.validateCheckboxes)(key, props, issue, errors);
         }
-        // TODO: Custom validators
+    }
+    // If there is no config file, return the normal validation errors
+    if (!fs_1.default.existsSync(`${workspace}/.github/validator/config.yml`))
+        return errors;
+    // Read validator config from ./.github/validator/config.yml
+    const config = yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/validator/config.yml`, 'utf8'));
+    // Run the script for each key in the config
+    for (const validator of config.validators) {
+        // Import the script for the validator
+        const script = require(`${workspace}/.github/validator/${validator.script}`);
+        // Run the method, passing in the issue data for that field (if any)
+        const result = await script[validator.method](issue[validator.field]);
+        // If the script returns an error, add it to the list
+        if (result !== 'success')
+            errors.push(`Invalid ${validator.field}: ${result}`);
     }
     return errors;
 }

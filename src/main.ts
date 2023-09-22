@@ -41,7 +41,11 @@ export async function run(): Promise<void> {
   )
 
   // Validate the parsed issue against the template
-  const errors: string[] = await validate(parsedTemplate, parsedIssue)
+  const errors: string[] = await validate(
+    parsedTemplate,
+    parsedIssue,
+    workspace
+  )
 
   console.log(errors)
 }
