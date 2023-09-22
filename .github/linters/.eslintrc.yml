@@ -47,6 +47,7 @@ rules:
     'camelcase': 'off',
     'i18n-text/no-en': 'off',
     'import/no-commonjs': 'off',
+    'import/no-dynamic-require': 'off',
     'import/no-namespace': 'off',
     'no-console': 'off',
     'prettier/prettier': 'error'
