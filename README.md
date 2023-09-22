@@ -18,31 +18,43 @@ Validate issue form submissions
 Here is a simple example of how to use this action in your workflow. Make sure
 to replace `vX.X.X` with the latest version of this action.
 
-<!-- TODO
 ```yaml
+name: IssueOps Workflow
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+
+permissions:
+  contents: read
+  issues: write
+
 jobs:
-  example:
-    name: Example
+  process:
+    name: Process Issue
     runs-on: ubuntu-latest
 
-    # Write permissions to issues is required
-    permissions:
-      issues: write
-
     steps:
-      # Add labels to an issue in this repository
-      - name: Add Labels
-        id: add-labels
-        uses: issue-ops/labeler@vX.X.X
-        with:
-          action: add
-          issue_number: 1
-          labels: |
-            enhancement
-            great-first-issue
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
+      - name: Parse Issue
+        id: parse
+        uses: issue-ops/parser@vX.X.X
+        with:
+          body: ${{ github.event.issue.body }}
+
+      - name: Validate Issue
+        id: validate
+        uses: issue-ops/validator@vX.X.X
+        with:
+          issue-form-template: example-template.yml
+          parsed-issue-body: ${{ steps.parse.outputs.json }}
+          workspace: ${{ github.workspace }}
 ```
--->
 
 ## Behavior
 
