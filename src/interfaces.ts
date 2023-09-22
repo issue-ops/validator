@@ -74,7 +74,6 @@ export interface DropdownField {
     description?: string
     multiple?: boolean
     options: string[]
-    default?: number
   }
   validations?: {
     required?: boolean
@@ -90,10 +89,7 @@ export interface CheckboxesField {
   attributes: {
     label: string
     description?: string
-    options: {
-      label: string
-      required?: boolean
-    }[]
+    options: CheckboxesOption[]
   }
   validations?: {
     required?: boolean
@@ -106,13 +102,33 @@ export interface CheckboxesField {
 export interface FormattedField {
   type: 'markdown' | 'textarea' | 'input' | 'dropdown' | 'checkboxes'
   required: boolean
-  default?: number
   multiple?: boolean
-  options?: (
-    | string
-    | {
-        label: string
-        required: boolean
-      }
-  )[]
+  dropdownOptions?: string[]
+  checkboxesOptions?: CheckboxesOption[]
+}
+
+/**
+ * A parsed issue body
+ *
+ * Each key can be a string. Each value can be a string, list of strings,
+ * object, or null.
+ */
+export interface ParsedBody {
+  [key: string]: string | string[] | Checkboxes | null
+}
+
+/**
+ * A parsed checkboxes input
+ */
+export interface Checkboxes {
+  selected: string[]
+  unselected: string[]
+}
+
+/**
+ * A checkbox option
+ */
+export interface CheckboxesOption {
+  label: string
+  required: boolean
 }

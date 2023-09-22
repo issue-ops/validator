@@ -82,7 +82,7 @@ describe('parseTemplate', () => {
           id: 'test',
           attributes: {
             label: 'This is a test',
-            options: ['this', 'that', 'the other one']
+            options: ['this', 'that']
           }
         }
       ]
@@ -92,9 +92,8 @@ describe('parseTemplate', () => {
       this_is_a_test: {
         type: 'dropdown',
         required: false,
-        default: undefined,
         multiple: false,
-        options: ['this', 'that', 'the other one']
+        dropdownOptions: ['this', 'that']
       }
     })
   })
@@ -117,9 +116,6 @@ describe('parseTemplate', () => {
               {
                 label: 'that',
                 required: true
-              },
-              {
-                label: 'the other one'
               }
             ]
           }
@@ -131,7 +127,7 @@ describe('parseTemplate', () => {
       this_is_a_test: {
         type: 'checkboxes',
         required: false,
-        options: [
+        checkboxesOptions: [
           {
             label: 'this',
             required: false
@@ -139,10 +135,6 @@ describe('parseTemplate', () => {
           {
             label: 'that',
             required: true
-          },
-          {
-            label: 'the other one',
-            required: false
           }
         ]
       }

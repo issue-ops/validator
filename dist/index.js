@@ -2788,6 +2788,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const yaml_1 = __importDefault(__nccwpck_require__(4083));
 const parse_1 = __nccwpck_require__(6089);
+const validate_1 = __nccwpck_require__(4953);
 /**
  * The entrypoint for the action
  */
@@ -2797,14 +2798,21 @@ async function run() {
         required: true
     });
     const workspace = core.getInput('workspace', { required: true });
+    const parsedIssue = JSON.parse(core.getInput('parsed-issue-body', { required: true }));
+    core.info('Running action with the following inputs:');
+    core.info(`  template: ${template}`);
+    core.info(`  workspace: ${workspace}`);
+    core.info(`  parsedIssue: ${JSON.stringify(parsedIssue)}`);
     // Verify the template exists
     if (!fs_1.default.existsSync(`${workspace.replace(/\/+$/, '')}/.github/ISSUE_TEMPLATE/${template}`)) {
         core.setFailed(`Template not found: ${template}`);
         return;
     }
     // Read and parse the template
-    const templateYaml = yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8'));
-    await (0, parse_1.parseTemplate)(templateYaml);
+    const parsedTemplate = await (0, parse_1.parseTemplate)(yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8')));
+    // Validate the parsed issue against the template
+    const errors = await (0, validate_1.validate)(parsedTemplate, parsedIssue);
+    console.log(errors);
 }
 exports.run = run;
 
@@ -2840,14 +2848,13 @@ async function parseTemplate(template) {
         };
         if (item.type === 'dropdown') {
             // These fields are only used by dropdowns
-            fields[formattedKey].default = item.attributes.default;
             fields[formattedKey].multiple = item.attributes.multiple || false;
-            fields[formattedKey].options = item.attributes.options;
+            fields[formattedKey].dropdownOptions = item.attributes.options;
         }
         if (item.type === 'checkboxes') {
             // Checkboxes have a different options format than dropdowns
             // Enforce false for required if not present
-            fields[formattedKey].options = item.attributes.options.map((x) => {
+            fields[formattedKey].checkboxesOptions = item.attributes.options.map((x) => {
                 return { label: x.label, required: x.required || false };
             });
         }
@@ -2855,6 +2862,244 @@ async function parseTemplate(template) {
     return fields;
 }
 exports.parseTemplate = parseTemplate;
+
+
+/***/ }),
+
+/***/ 4953:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.validate = void 0;
+const input_1 = __nccwpck_require__(4823);
+const textarea_1 = __nccwpck_require__(1228);
+const dropdown_1 = __nccwpck_require__(7229);
+const checkboxes_1 = __nccwpck_require__(4464);
+/**
+ * Validates the parsed issue body against the parsed issue form template
+ * @param template The parsed issue form template
+ * @param issue The parsed issue body
+ * @returns A list of errors (empty list means the issue is valid)
+ */
+async function validate(template, issue) {
+    const errors = [];
+    for (const [key, props] of Object.entries(template)) {
+        // TODO: Custom validators
+        // Type-specific validations
+        if (props.type === 'input') {
+            (0, input_1.validateInput)(key, props, issue, errors);
+        }
+        else if (props.type === 'textarea') {
+            (0, textarea_1.validateTextarea)(key, props, issue, errors);
+        }
+        else if (props.type === 'dropdown') {
+            (0, dropdown_1.validateDropdown)(key, props, issue, errors);
+        }
+        else if (props.type === 'checkboxes') {
+            (0, checkboxes_1.validateCheckboxes)(key, props, issue, errors);
+        }
+    }
+    return errors;
+}
+exports.validate = validate;
+
+
+/***/ }),
+
+/***/ 4464:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.validateCheckboxes = void 0;
+/**
+ * Validates the parsed issue body section as a checkboxes type
+ * @param key The name of the field
+ * @param props The issue form template properties for this field
+ * @param issue The parsed issue body
+ * @param errors The running list of errors (modified in place)
+ * @returns
+ */
+function validateCheckboxes(key, props, issue, errors) {
+    const exists = Object.keys(issue).includes(key);
+    const required = props.required ?? false;
+    if (exists === false) {
+        // Input doesn't exist
+        // Error if required, otherwise skip
+        if (required)
+            errors.push(`Missing required input: ${key}`);
+        return;
+    }
+    else {
+        // Input exists
+        // Input is not a Checkboxes object
+        // This is a breaking error, so return early
+        if (!isCheckboxes(issue[key])) {
+            errors.push(`Checkboxes input is not a Checkboxes object: ${key}`);
+            return;
+        }
+        // Get the type-safe Checkboxes object
+        const checkboxes = issue[key];
+        // Get the allowed options from the properties
+        const allowedOptions = props.checkboxesOptions === undefined
+            ? []
+            : props.checkboxesOptions.map((option) => option.label);
+        // Get the required options from the properties
+        const requiredOptions = props.checkboxesOptions === undefined
+            ? []
+            : props.checkboxesOptions
+                .filter((option) => option.required === true)
+                .map((option) => option.label);
+        // Required checkboxes must have at least one option selected
+        if (required && checkboxes.selected.length === 0)
+            errors.push(`At least one checkbox must be selected: ${key}`);
+        // Selected checkboxes are not in the list of allowed options
+        for (const option of checkboxes.selected)
+            if (!allowedOptions.includes(option))
+                errors.push(`Invalid checkboxes selection: ${key} / ${option}`);
+        // Checkboxes unselected must be in the list of options
+        for (const option of checkboxes.unselected)
+            if (!allowedOptions.includes(option))
+                errors.push(`Invalid checkboxes selection: ${key} / ${option}`);
+        // Required options must not be in the unselected list
+        for (const option of checkboxes.unselected)
+            if (requiredOptions.includes(option))
+                errors.push(`Missing required checkboxes selection: ${key} / ${option}`);
+    }
+}
+exports.validateCheckboxes = validateCheckboxes;
+/**
+ * Checks if a given object is a Checkboxes object
+ * @param obj The object to check
+ * @returns True if the object is a Checkboxes object, false otherwise
+ */
+function isCheckboxes(obj) {
+    return (typeof obj === 'object' &&
+        'selected' in obj &&
+        'unselected' in obj &&
+        Array.isArray(obj.selected) &&
+        obj.selected.every((item) => typeof item === 'string') &&
+        Array.isArray(obj.unselected) &&
+        obj.unselected.every((item) => typeof item === 'string'));
+}
+
+
+/***/ }),
+
+/***/ 7229:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.validateDropdown = void 0;
+/**
+ * Validates the parsed issue body section as a dropdown type
+ * @param key The name of the field
+ * @param props The issue form template properties for this field
+ * @param issue The parsed issue body
+ * @param errors The running list of errors (modified in place)
+ * @returns
+ */
+function validateDropdown(key, props, issue, errors) {
+    const exists = Object.keys(issue).includes(key);
+    const required = props.required ?? false;
+    const multiple = props.multiple ?? false;
+    if (exists === false) {
+        // Input doesn't exist
+        // Error if required, otherwise skip
+        if (required)
+            errors.push(`Missing required input: ${key}`);
+        return;
+    }
+    else {
+        // Input exists
+        // Input is not a list of strings
+        // This is a breaking error, so return early
+        if (!isStringList(issue[key])) {
+            errors.push(`Dropdown input is not a list: ${key}`);
+            return;
+        }
+        // Get the type-safe list of values
+        const values = issue[key];
+        // Input is required
+        // Input is empty
+        if (required && values.length === 0)
+            errors.push(`Missing required input: ${key}`);
+        // Input is not multi-select
+        // Multiple options selected
+        if (!multiple && values.length > 1)
+            errors.push(`Too many dropdown selections: ${key}`);
+        // Get the allowed options from the properties
+        const allowedOptions = (props.dropdownOptions ?? []);
+        // Selected options are not in the list of options
+        for (const option of values) {
+            if (!allowedOptions.includes(option))
+                errors.push(`Invalid dropdown selection: ${key} / ${option}`);
+        }
+    }
+}
+exports.validateDropdown = validateDropdown;
+function isStringList(obj) {
+    return Array.isArray(obj) && obj.every((item) => typeof item === 'string');
+}
+
+
+/***/ }),
+
+/***/ 4823:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.validateInput = void 0;
+/**
+ * Validates the parsed issue body section as an input type
+ * @param template The parsed issue form template
+ * @param issue The parsed issue body
+ * @param errors The running list of errors (modified in place)
+ * @returns
+ */
+function validateInput(key, props, issue, errors) {
+    // Required input does not exist
+    if (props.required && (!issue[key] || issue[key] === ''))
+        errors.push(`Missing required input: ${key}`);
+    // Inputs must be strings
+    if (issue[key] && typeof issue[key] !== 'string')
+        errors.push(`Input response is not a string: ${key}`);
+}
+exports.validateInput = validateInput;
+
+
+/***/ }),
+
+/***/ 1228:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.validateTextarea = void 0;
+/**
+ * Validates the parsed issue body section as a textarea type
+ * @param template The parsed issue form template
+ * @param issue The parsed issue body
+ * @param errors The running list of errors (modified in place)
+ * @returns
+ */
+function validateTextarea(key, props, issue, errors) {
+    // Required input does not exist
+    if (props.required && (!issue[key] || issue[key] === ''))
+        errors.push(`Missing required input: ${key}`);
+    // Textareas must be strings
+    if (issue[key] && typeof issue[key] !== 'string')
+        errors.push(`Textarea response is not a string: ${key}`);
+}
+exports.validateTextarea = validateTextarea;
 
 
 /***/ }),

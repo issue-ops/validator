@@ -27,17 +27,18 @@ export async function parseTemplate(
 
     if (item.type === 'dropdown') {
       // These fields are only used by dropdowns
-      fields[formattedKey].default = item.attributes.default
       fields[formattedKey].multiple = item.attributes.multiple || false
-      fields[formattedKey].options = item.attributes.options
+      fields[formattedKey].dropdownOptions = item.attributes.options
     }
 
     if (item.type === 'checkboxes') {
       // Checkboxes have a different options format than dropdowns
       // Enforce false for required if not present
-      fields[formattedKey].options = item.attributes.options.map((x) => {
-        return { label: x.label, required: x.required || false }
-      })
+      fields[formattedKey].checkboxesOptions = item.attributes.options.map(
+        (x) => {
+          return { label: x.label, required: x.required || false }
+        }
+      )
     }
   }
 
