@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import fs from 'fs'
 import YAML from 'yaml'
-import { parseTemplate } from './parse'
+import { parseTemplate } from './utils/parse'
 import { FormattedField, ParsedBody } from './interfaces'
 import { validate } from './validate'
 

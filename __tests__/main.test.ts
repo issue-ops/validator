@@ -5,7 +5,7 @@ import fs from 'fs'
 import YAML from 'yaml'
 import * as core from '@actions/core'
 import * as main from '../src/main'
-import * as parse from '../src/parse'
+import * as parse from '../src/utils/parse'
 
 // Get the expected data (before mocking fs)
 const parsedIssue: string = fs.readFileSync(

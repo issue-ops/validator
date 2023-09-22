@@ -2722,35 +2722,6 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 5770:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.formatKey = void 0;
-/**
- * Formats a input name to a snake case string
- *
- * - Removes leading and trailing whitespace
- * - Converts to lowercase
- * - Replaces spaces with underscores
- * - Replaces non-alphanumeric characters with underscores
- * - Replaces multiple consecutive underscores with a single underscore
- */
-function formatKey(name) {
-    return name
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '_')
-        .replace(/^_+|_+$/g, '')
-        .replace(/_+/g, '_');
-}
-exports.formatKey = formatKey;
-
-
-/***/ }),
-
 /***/ 399:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -2787,7 +2758,7 @@ exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const yaml_1 = __importDefault(__nccwpck_require__(4083));
-const parse_1 = __nccwpck_require__(6089);
+const parse_1 = __nccwpck_require__(8871);
 const validate_1 = __nccwpck_require__(4953);
 /**
  * The entrypoint for the action
@@ -2819,14 +2790,43 @@ exports.run = run;
 
 /***/ }),
 
-/***/ 6089:
+/***/ 6570:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.formatKey = void 0;
+/**
+ * Formats a input name to a snake case string
+ *
+ * - Removes leading and trailing whitespace
+ * - Converts to lowercase
+ * - Replaces spaces with underscores
+ * - Replaces non-alphanumeric characters with underscores
+ * - Replaces multiple consecutive underscores with a single underscore
+ */
+function formatKey(name) {
+    return name
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .replace(/_+/g, '_');
+}
+exports.formatKey = formatKey;
+
+
+/***/ }),
+
+/***/ 8871:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parseTemplate = void 0;
-const format_1 = __nccwpck_require__(5770);
+const format_1 = __nccwpck_require__(6570);
 /**
  * Parses the issue form template and returns a dictionary of fields
  * @param template The issue form template
@@ -2886,7 +2886,6 @@ const checkboxes_1 = __nccwpck_require__(4464);
 async function validate(template, issue) {
     const errors = [];
     for (const [key, props] of Object.entries(template)) {
-        // TODO: Custom validators
         // Type-specific validations
         if (props.type === 'input') {
             (0, input_1.validateInput)(key, props, issue, errors);
@@ -2900,6 +2899,7 @@ async function validate(template, issue) {
         else if (props.type === 'checkboxes') {
             (0, checkboxes_1.validateCheckboxes)(key, props, issue, errors);
         }
+        // TODO: Custom validators
     }
     return errors;
 }

@@ -2,8 +2,8 @@
  * Unit tests for the parser, src/parse.ts
  */
 
-import * as parse from '../src/parse'
-import { IssueFormTemplate } from '../src/interfaces'
+import * as parse from '../../src/utils/parse'
+import { IssueFormTemplate } from '../../src/interfaces'
 
 describe('parseTemplate', () => {
   it('skips markdown fields', async () => {

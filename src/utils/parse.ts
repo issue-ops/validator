@@ -1,4 +1,4 @@
-import { IssueFormTemplate, FormattedField } from './interfaces'
+import { IssueFormTemplate, FormattedField } from '../interfaces'
 import { formatKey } from './format'
 
 /**

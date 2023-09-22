@@ -17,8 +17,6 @@ export async function validate(
   const errors: string[] = []
 
   for (const [key, props] of Object.entries(template)) {
-    // TODO: Custom validators
-
     // Type-specific validations
     if (props.type === 'input') {
       validateInput(key, props, issue, errors)
@@ -29,6 +27,8 @@ export async function validate(
     } else if (props.type === 'checkboxes') {
       validateCheckboxes(key, props, issue, errors)
     }
+
+    // TODO: Custom validators
   }
 
   return errors
