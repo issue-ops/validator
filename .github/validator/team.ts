@@ -40,7 +40,7 @@ export async function exists(
     return 'success'
   } catch (error: any) {
     // If the team does not exist, return an error message
-    if (error.status === 404) return 'Team does not exist'
+    if (error.status === 404) return `Team ${field} does not exist`
     // Otherwise, throw the exception
     else throw error
   }

@@ -1,6 +1,3 @@
-# IssueOps Validator Configuration
-# See: https://github.com/issue-ops/validator
-
 validators:
   - field: read_team
     script: team
