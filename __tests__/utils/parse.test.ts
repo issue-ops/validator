@@ -6,6 +6,10 @@ import * as parse from '../../src/utils/parse'
 import { IssueFormTemplate } from '../../src/interfaces'
 
 describe('parseTemplate', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('skips markdown fields', async () => {
     const template: IssueFormTemplate = {
       name: 'Example Request',

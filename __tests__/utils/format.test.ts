@@ -5,6 +5,10 @@
 import { formatKey } from '../../src/utils/format'
 
 describe('formatKey', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('removes non-alphanumeric characters', async () => {
     expect(formatKey('!@#$%^&*()_+')).toBe('')
   })

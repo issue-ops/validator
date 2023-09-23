@@ -8,6 +8,7 @@ describe('checkboxes', () => {
   let errors: string[] = []
 
   beforeEach(() => {
+    jest.clearAllMocks()
     errors = []
   })
 

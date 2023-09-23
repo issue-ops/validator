@@ -8,6 +8,7 @@ describe('input', () => {
   let errors: string[] = []
 
   beforeEach(() => {
+    jest.clearAllMocks()
     errors = []
   })
 

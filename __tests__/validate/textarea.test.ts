@@ -8,6 +8,7 @@ describe('textarea', () => {
   let errors: string[] = []
 
   beforeEach(() => {
+    jest.clearAllMocks()
     errors = []
   })
 

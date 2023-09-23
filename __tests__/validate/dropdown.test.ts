@@ -8,6 +8,7 @@ describe('dropdown', () => {
   let errors: string[] = []
 
   beforeEach(() => {
+    jest.clearAllMocks()
     errors = []
   })
 
