@@ -2911,7 +2911,6 @@ async function validate(template, issue, workspace) {
         return errors;
     // Read validator config from ./.github/validator/config.yml
     const config = yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/validator/config.yml`, 'utf8'));
-    // Run the script for each key in the config
     for (const validator of config.validators) {
         // Import the script for the validator
         const script = require(`${workspace}/.github/validator/${validator.script}`);

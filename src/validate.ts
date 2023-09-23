@@ -41,7 +41,6 @@ export async function validate(
     fs.readFileSync(`${workspace}/.github/validator/config.yml`, 'utf8')
   )
 
-  // Run the script for each key in the config
   for (const validator of config.validators) {
     // Import the script for the validator
     const script = require(`${workspace}/.github/validator/${validator.script}`)
