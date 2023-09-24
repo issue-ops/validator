@@ -1,0 +1,64 @@
+name: Issue Opened/Edited
+
+# This workflow will run when an issue is opened or edited
+on:
+  issues:
+    types:
+      - opened
+      - edited
+
+jobs:
+  validate:
+    name: Parse and Validate Issue
+    runs-on: ubuntu-latest
+
+    # The validation job will only run if the issue has specific label(s). In
+    # this case, the issue must have the `issueops:new-thing` label.
+    if: |
+      contains(github.event.issue.labels.*.name, 'issueops:new-thing')
+
+    steps:
+      # This is required to access the repository's files. Specifically, the
+      # issue forms template and the additional validation configuration.
+      - name: Checkout Repository
+        id: checkout
+        uses: actions/checkout@v4
+
+      # If your validation scripts include any third-party dependencies, you
+      # will need to install them. First, setup Node.js on the runner.
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: npm
+
+      # Next, install the dependencies from `package.json`.
+      - name: Install Dependencies
+        id: install
+        run: npm install
+
+      # Parse the issue body and convert it to JSON.
+      - name: Parse Issue Body
+        id: parse
+        uses: issue-ops/parser@v0.2.0
+        with:
+          body: ${{ github.event.issue.body }}
+          issue_form_template: example-request.yml
+          workspace: ${{ github.workspace }}
+
+      # Validate the parsed issue body against the issue form template and any
+      # custom validation scripts.
+      - name: Validate Issue
+        id: validate
+        uses: issue-ops/validator@vX.X.X
+        with:
+          issue_form_template: example-template.yml
+          parsed_issue_body: ${{ steps.parse.outputs.json }}
+          workspace: ${{ github.workspace }}
+
+      - name: Output Validation Results
+        id: output
+        run: |
+          echo "Result: ${{ steps.validate.outputs.result }}"
+          echo "Errors: ${{ steps.validate.outputs.errors }}"
