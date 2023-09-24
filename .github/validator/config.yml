@@ -1,7 +1,5 @@
 validators:
   - field: read_team
-    script: team.js
-    method: exists
+    script: team
   - field: write_team
-    script: team.js
-    method: exists
+    script: team

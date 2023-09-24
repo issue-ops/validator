@@ -46,7 +46,7 @@ export async function validate(
     const script = require(`${workspace}/.github/validator/${validator.script}`)
 
     // Run the method, passing in the issue data for that field (if any)
-    const result = await script[validator.method](issue[validator.field])
+    const result = await script(issue[validator.field])
 
     // If the script returns an error, add it to the list
     if (result !== 'success')

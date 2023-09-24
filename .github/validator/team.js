@@ -11,7 +11,7 @@
  *  which type(s) to expect, and how to handle them.
  * @returns {Promise<string>} An error message if validation fails, 'success' otherwise
  */
-export async function exists(field) {
+module.exports = async (field) => {
   const { Octokit } = require('@octokit/rest')
 
   // You will need to set any required environment variables in the GitHub

@@ -93,7 +93,6 @@ describe('validate', () => {
     jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
     jest.spyOn(checkboxes, 'validateCheckboxes').mockImplementation()
     jest.spyOn(fs, 'existsSync').mockReturnValue(true)
-    jest.spyOn(require(`${process.cwd()}/.github/validator/team`), 'exists')
 
     const mocktokit = {
       rest: {
@@ -130,12 +129,6 @@ describe('validate', () => {
     )
 
     expect(errors).toEqual([])
-    expect(
-      require(`${process.cwd()}/.github/validator/team`).exists
-    ).toHaveBeenCalledWith('IssueOps-Demo-Readers')
-    expect(
-      require(`${process.cwd()}/.github/validator/team`).exists
-    ).toHaveBeenCalledWith('IssueOps-Demo-Writers')
   })
 
   it('fails custom validation if config is present and inputs are invalid', async () => {
@@ -144,7 +137,6 @@ describe('validate', () => {
     jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
     jest.spyOn(checkboxes, 'validateCheckboxes').mockImplementation()
     jest.spyOn(fs, 'existsSync').mockReturnValue(true)
-    jest.spyOn(require(`${process.cwd()}/.github/validator/team`), 'exists')
 
     const mocktokit = {
       rest: {
@@ -182,11 +174,5 @@ describe('validate', () => {
       'Invalid read_team: Team IssueOps-Demo-Readers does not exist',
       'Invalid write_team: Team IssueOps-Demo-Writers does not exist'
     ])
-    expect(
-      require(`${process.cwd()}/.github/validator/team`).exists
-    ).toHaveBeenCalledWith('IssueOps-Demo-Readers')
-    expect(
-      require(`${process.cwd()}/.github/validator/team`).exists
-    ).toHaveBeenCalledWith('IssueOps-Demo-Writers')
   })
 })
