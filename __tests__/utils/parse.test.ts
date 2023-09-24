@@ -6,11 +6,7 @@ import * as parse from '../../src/utils/parse'
 import { IssueFormTemplate } from '../../src/interfaces'
 
 describe('parseTemplate', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  it('skips markdown fields', async () => {
+  it('parses issue form templates', async () => {
     const template: IssueFormTemplate = {
       name: 'Example Request',
       description: 'Submit an example request',
@@ -18,100 +14,39 @@ describe('parseTemplate', () => {
         {
           type: 'markdown',
           attributes: {
-            value: 'test'
+            value: 'This is some sample markdown'
           }
-        }
-      ]
-    }
-
-    expect(await parse.parseTemplate(template)).toEqual({})
-  })
-
-  it('parses textarea fields', async () => {
-    const template: IssueFormTemplate = {
-      name: 'Example Request',
-      description: 'Submit an example request',
-      body: [
+        },
         {
           type: 'textarea',
-          id: 'test',
+          id: 'my_textarea',
           attributes: {
-            label: 'This is a test'
+            label: 'This is a textarea field'
           },
           validations: {
             required: true
           }
-        }
-      ]
-    }
-
-    expect(await parse.parseTemplate(template)).toEqual({
-      this_is_a_test: {
-        type: 'textarea',
-        required: true
-      }
-    })
-  })
-
-  it('parses input fields', async () => {
-    const template: IssueFormTemplate = {
-      name: 'Example Request',
-      description: 'Submit an example request',
-      body: [
+        },
         {
           type: 'input',
-          id: 'test',
+          id: 'my_input',
           attributes: {
-            label: 'This is a test'
+            label: 'This is an input field'
           }
-        }
-      ]
-    }
-
-    expect(await parse.parseTemplate(template)).toEqual({
-      this_is_a_test: {
-        type: 'input',
-        required: false
-      }
-    })
-  })
-
-  it('parses dropdown fields', async () => {
-    const template: IssueFormTemplate = {
-      name: 'Example Request',
-      description: 'Submit an example request',
-      body: [
+        },
         {
           type: 'dropdown',
-          id: 'test',
+          id: 'my_dropdown',
           attributes: {
-            label: 'This is a test',
+            label: 'This is a dropdown field',
             options: ['this', 'that']
           }
-        }
-      ]
-    }
-
-    expect(await parse.parseTemplate(template)).toEqual({
-      this_is_a_test: {
-        type: 'dropdown',
-        required: false,
-        multiple: false,
-        dropdownOptions: ['this', 'that']
-      }
-    })
-  })
-
-  it('parses checkboxes fields', async () => {
-    const template: IssueFormTemplate = {
-      name: 'Example Request',
-      description: 'Submit an example request',
-      body: [
+        },
         {
           type: 'checkboxes',
-          id: 'test',
+          id: 'my_checkboxes',
           attributes: {
-            label: 'This is a test',
+            label: 'This is a checkboxes field',
             options: [
               {
                 label: 'this',
@@ -128,7 +63,21 @@ describe('parseTemplate', () => {
     }
 
     expect(await parse.parseTemplate(template)).toEqual({
-      this_is_a_test: {
+      this_is_a_textarea_field: {
+        type: 'textarea',
+        required: true
+      },
+      this_is_an_input_field: {
+        type: 'input',
+        required: false
+      },
+      this_is_a_dropdown_field: {
+        type: 'dropdown',
+        required: false,
+        multiple: false,
+        dropdownOptions: ['this', 'that']
+      },
+      this_is_a_checkboxes_field: {
         type: 'checkboxes',
         required: false,
         checkboxesOptions: [

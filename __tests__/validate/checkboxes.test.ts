@@ -2,13 +2,13 @@
  * Unit tests for the checkboxes validator
  */
 
+import { FormattedField } from '../../src/interfaces'
 import * as checkboxes from '../../src/validate/checkboxes'
 
 describe('checkboxes', () => {
   let errors: string[] = []
 
   beforeEach(() => {
-    jest.clearAllMocks()
     errors = []
   })
 
@@ -17,7 +17,7 @@ describe('checkboxes', () => {
       'test',
       {
         type: 'checkboxes'
-      } as any,
+      } as FormattedField,
       {},
       errors
     )

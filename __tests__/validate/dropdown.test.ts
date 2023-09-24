@@ -2,13 +2,13 @@
  * Unit tests for the dropdown validator
  */
 
+import { FormattedField } from '../../src/interfaces'
 import * as dropdown from '../../src/validate/dropdown'
 
 describe('dropdown', () => {
   let errors: string[] = []
 
   beforeEach(() => {
-    jest.clearAllMocks()
     errors = []
   })
 
@@ -17,7 +17,7 @@ describe('dropdown', () => {
       'test',
       {
         type: 'dropdown'
-      } as any,
+      } as FormattedField,
       {},
       errors
     )

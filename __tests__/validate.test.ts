@@ -19,6 +19,51 @@ describe('validate', () => {
     jest.clearAllMocks()
   })
 
+  it('validates each input type', async () => {
+    jest.spyOn(input, 'validateInput').mockImplementation()
+    jest.spyOn(textarea, 'validateTextarea').mockImplementation()
+    jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
+    jest.spyOn(checkboxes, 'validateCheckboxes').mockImplementation()
+    jest.spyOn(fs, 'existsSync').mockReturnValue(false)
+
+    await validate(
+      {
+        test_input: {
+          type: 'input',
+          required: true
+        },
+        test_textarea: {
+          type: 'textarea',
+          required: true
+        },
+        test_dropdown: {
+          type: 'dropdown',
+          required: true,
+          dropdownOptions: ['test']
+        },
+        test_checkboxes: {
+          type: 'checkboxes',
+          required: true,
+          checkboxesOptions: [
+            {
+              label: 'test',
+              required: true
+            }
+          ]
+        }
+      },
+      {
+        test_input: 'test'
+      },
+      process.cwd()
+    )
+
+    expect(input.validateInput).toHaveBeenCalled()
+    expect(textarea.validateTextarea).toHaveBeenCalled()
+    expect(dropdown.validateDropdown).toHaveBeenCalled()
+    expect(checkboxes.validateCheckboxes).toHaveBeenCalled()
+  })
+
   it('skips custom validation if no config is present', async () => {
     jest.spyOn(input, 'validateInput').mockImplementation()
     jest.spyOn(textarea, 'validateTextarea').mockImplementation()

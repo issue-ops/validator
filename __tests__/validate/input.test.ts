@@ -8,7 +8,6 @@ describe('input', () => {
   let errors: string[] = []
 
   beforeEach(() => {
-    jest.clearAllMocks()
     errors = []
   })
 
@@ -24,6 +23,22 @@ describe('input', () => {
     )
 
     expect(errors).toContain('Missing required input: test')
+  })
+
+  it('returns an error for empty required input', async () => {
+    input.validateInput(
+      'test',
+      {
+        type: 'input',
+        required: true
+      },
+      {
+        test: ''
+      },
+      errors
+    )
+
+    expect(errors).toContain('Empty required input: test')
   })
 
   it('returns an error for non-string input', async () => {
