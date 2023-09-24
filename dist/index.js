@@ -15159,18 +15159,18 @@ const validate_1 = __nccwpck_require__(4953);
  */
 async function run() {
     // Get inputs
-    const addComment = core.getInput('add_comment', {
+    const addComment = core.getInput('add-comment', {
         required: true
     }) === 'true';
-    const issueNumber = parseInt(core.getInput('issue_number', { required: true }), 10);
-    const parsedIssue = JSON.parse(core.getInput('parsed_issue_body', { required: true }));
+    const issueNumber = parseInt(core.getInput('issue-number', { required: true }), 10);
+    const parsedIssue = JSON.parse(core.getInput('parsed-issue-body', { required: true }));
     const repository = core.getInput('repository', {
         required: true
     });
-    const template = core.getInput('issue_form_template', {
+    const template = core.getInput('issue-form-template', {
         required: true
     });
-    const token = core.getInput('github_token', { required: true });
+    const token = core.getInput('github-token', { required: true });
     const workspace = core
         .getInput('workspace', { required: true })
         .replace(/\/+$/, ''); // Remove trailing slashes

@@ -43,15 +43,15 @@ describe('main', () => {
   it('retrieves the inputs', async () => {
     jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
       switch (name) {
-        case 'add_comment':
+        case 'add-comment':
           return 'false'
-        case 'github_token':
+        case 'github-token':
           return '12345'
-        case 'issue_form_template':
+        case 'issue-form-template':
           return 'example-request.yml'
-        case 'issue_number':
+        case 'issue-number':
           return '1'
-        case 'parsed_issue_body':
+        case 'parsed-issue-body':
           return parsedIssue
         case 'repository':
           return 'issue-ops/validator'
@@ -67,22 +67,22 @@ describe('main', () => {
 
     await main.run()
 
-    expect(core.getInput).toHaveBeenCalledWith('add_comment', {
+    expect(core.getInput).toHaveBeenCalledWith('add-comment', {
       required: true
     })
-    expect(core.getInput).toHaveBeenCalledWith('issue_number', {
+    expect(core.getInput).toHaveBeenCalledWith('issue-number', {
       required: true
     })
-    expect(core.getInput).toHaveBeenCalledWith('issue_form_template', {
+    expect(core.getInput).toHaveBeenCalledWith('issue-form-template', {
       required: true
     })
-    expect(core.getInput).toHaveBeenCalledWith('parsed_issue_body', {
+    expect(core.getInput).toHaveBeenCalledWith('parsed-issue-body', {
       required: true
     })
     expect(core.getInput).toHaveBeenCalledWith('repository', {
       required: true
     })
-    expect(core.getInput).toHaveBeenCalledWith('github_token', {
+    expect(core.getInput).toHaveBeenCalledWith('github-token', {
       required: true
     })
     expect(core.getInput).toHaveBeenCalledWith('workspace', { required: true })
@@ -91,15 +91,15 @@ describe('main', () => {
   it('fails when the issue form template does not exist', async () => {
     jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
       switch (name) {
-        case 'add_comment':
+        case 'add-comment':
           return 'false'
-        case 'github_token':
+        case 'github-token':
           return '12345'
-        case 'issue_form_template':
+        case 'issue-form-template':
           return 'example-request.yml'
-        case 'issue_number':
+        case 'issue-number':
           return '1'
-        case 'parsed_issue_body':
+        case 'parsed-issue-body':
           return parsedIssue
         case 'repository':
           return 'issue-ops/validator'
@@ -119,18 +119,18 @@ describe('main', () => {
     )
   })
 
-  it('does not add a comment when add_comment is false', async () => {
+  it('does not add a comment when add-comment is false', async () => {
     jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
       switch (name) {
-        case 'add_comment':
+        case 'add-comment':
           return 'false'
-        case 'github_token':
+        case 'github-token':
           return '12345'
-        case 'issue_form_template':
+        case 'issue-form-template':
           return 'example-request.yml'
-        case 'issue_number':
+        case 'issue-number':
           return '1'
-        case 'parsed_issue_body':
+        case 'parsed-issue-body':
           return parsedIssue
         case 'repository':
           return 'issue-ops/validator'
@@ -192,18 +192,18 @@ describe('main', () => {
     expect(mocktokit.rest.issues.createComment).not.toHaveBeenCalled()
   })
 
-  it('adds a failure comment when add_comment is true', async () => {
+  it('adds a failure comment when add-comment is true', async () => {
     jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
       switch (name) {
-        case 'add_comment':
+        case 'add-comment':
           return 'true'
-        case 'github_token':
+        case 'github-token':
           return '12345'
-        case 'issue_form_template':
+        case 'issue-form-template':
           return 'example-request.yml'
-        case 'issue_number':
+        case 'issue-number':
           return '1'
-        case 'parsed_issue_body':
+        case 'parsed-issue-body':
           return parsedIssue
         case 'repository':
           return 'issue-ops/validator'
@@ -279,15 +279,15 @@ describe('main', () => {
   it('adds a default failure comment if no template is provided', async () => {
     jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
       switch (name) {
-        case 'add_comment':
+        case 'add-comment':
           return 'true'
-        case 'github_token':
+        case 'github-token':
           return '12345'
-        case 'issue_form_template':
+        case 'issue-form-template':
           return 'example-request.yml'
-        case 'issue_number':
+        case 'issue-number':
           return '1'
-        case 'parsed_issue_body':
+        case 'parsed-issue-body':
           return parsedIssue
         case 'repository':
           return 'issue-ops/validator'
@@ -352,18 +352,18 @@ describe('main', () => {
     expect(mocktokit.rest.issues.createComment).toHaveBeenCalled()
   })
 
-  it('adds a success comment when add_comment is true', async () => {
+  it('adds a success comment when add-comment is true', async () => {
     jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
       switch (name) {
-        case 'add_comment':
+        case 'add-comment':
           return 'true'
-        case 'github_token':
+        case 'github-token':
           return '12345'
-        case 'issue_form_template':
+        case 'issue-form-template':
           return 'example-request.yml'
-        case 'issue_number':
+        case 'issue-number':
           return '1'
-        case 'parsed_issue_body':
+        case 'parsed-issue-body':
           return parsedIssue
         case 'repository':
           return 'issue-ops/validator'
@@ -438,15 +438,15 @@ describe('main', () => {
   it('adds a default success comment if no template is provided', async () => {
     jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
       switch (name) {
-        case 'add_comment':
+        case 'add-comment':
           return 'true'
-        case 'github_token':
+        case 'github-token':
           return '12345'
-        case 'issue_form_template':
+        case 'issue-form-template':
           return 'example-request.yml'
-        case 'issue_number':
+        case 'issue-number':
           return '1'
-        case 'parsed_issue_body':
+        case 'parsed-issue-body':
           return parsedIssue
         case 'repository':
           return 'issue-ops/validator'

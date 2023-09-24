@@ -13,23 +13,23 @@ import { validate } from './validate'
 export async function run(): Promise<void> {
   // Get inputs
   const addComment: boolean =
-    core.getInput('add_comment', {
+    core.getInput('add-comment', {
       required: true
     }) === 'true'
   const issueNumber: number = parseInt(
-    core.getInput('issue_number', { required: true }),
+    core.getInput('issue-number', { required: true }),
     10
   )
   const parsedIssue: ParsedBody = JSON.parse(
-    core.getInput('parsed_issue_body', { required: true })
+    core.getInput('parsed-issue-body', { required: true })
   )
   const repository: string = core.getInput('repository', {
     required: true
   })
-  const template: string = core.getInput('issue_form_template', {
+  const template: string = core.getInput('issue-form-template', {
     required: true
   })
-  const token: string = core.getInput('github_token', { required: true })
+  const token: string = core.getInput('github-token', { required: true })
   const workspace: string = core
     .getInput('workspace', { required: true })
     .replace(/\/+$/, '') // Remove trailing slashes

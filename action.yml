@@ -7,22 +7,22 @@ branding:
   color: blue
 
 inputs:
-  add_comment:
+  add-comment:
     description: Whether to comment on the issue with a success/failure message
     required: false
     default: 'true'
-  github_token:
+  github-token:
     description: The GitHub API token to use
     required: false
     default: ${{ github.token }}
-  issue_form_template:
+  issue-form-template:
     description: The issue form template file name (e.g. `new-repository.yml`)
     required: true
-  issue_number:
+  issue-number:
     description: The issue number
     required: true
     default: ${{ github.event.issue.number }}
-  parsed_issue_body:
+  parsed-issue-body:
     description: The issue body parsed by `issue-ops/parser`
     required: true
     default: ${{ github.event.issue.body }}
