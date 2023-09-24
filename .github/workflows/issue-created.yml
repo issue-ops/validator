@@ -44,7 +44,7 @@ jobs:
         uses: issue-ops/parser@v0.2.0
         with:
           body: ${{ github.event.issue.body }}
-          issue_form_template: example-request.yml
+          issue-form-template: example-request.yml
           workspace: ${{ github.workspace }}
 
       # Validate the parsed issue body against the issue form template and any
