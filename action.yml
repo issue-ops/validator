@@ -7,18 +7,41 @@ branding:
   color: blue
 
 inputs:
-  issue-form-template:
+  add_comment:
+    description: Whether to comment on the issue with a success/failure message
+    required: false
+    default: 'true'
+  github_token:
+    description: The GitHub API token to use
+    required: false
+    default: ${{ github.token }}
+  issue_form_template:
     description: The issue form template file name (e.g. `new-repository.yml`)
     required: true
-  parsed-issue-body:
+  issue_number:
+    description: The issue number
+    required: true
+    default: ${{ github.event.issue.number }}
+  parsed_issue_body:
     description: The issue body parsed by `issue-ops/parser`
     required: true
+    default: ${{ github.event.issue.body }}
+  repository:
+    description: The repository where the issue was opened
+    required: false
+    default: ${{ github.repository }}
   workspace:
     default: ${{ github.workspace }}
     description:
       The path where the repository has been cloned using the `actions/checkout`
       step. This is required to find the issue form template file.
     required: true
+
+outputs:
+  result:
+    description: The result of the validation ('success' or 'failure')
+  errors:
+    description: The errors encountered during validation
 
 runs:
   using: node20

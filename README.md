@@ -51,9 +51,19 @@ jobs:
         id: validate
         uses: issue-ops/validator@vX.X.X
         with:
-          issue-form-template: example-template.yml
-          parsed-issue-body: ${{ steps.parse.outputs.json }}
+          issue_form_template: example-template.yml
+          issue_number: ${{ github.event.issue.number }}
+          parsed_issue_body: ${{ steps.parse.outputs.json }}
           workspace: ${{ github.workspace }}
+
+      - if: ${{ steps.validate.outputs.result == 'failure' }}
+        name: Log Failure
+        id: failure
+        run: echo "${{ steps.validate.outputs.errors }}"
+
+      - if: ${{ steps.validate.outputs.result == 'success' }}
+        name: Do Next Steps
+        # ...
 ```
 
 ## Behavior
