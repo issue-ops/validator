@@ -51,7 +51,7 @@ jobs:
       # custom validation scripts.
       - name: Validate Issue
         id: validate
-        uses: issue-ops/validator@vX.X.X
+        uses: issue-ops/validator@main
         with:
           issue_form_template: example-template.yml
           parsed_issue_body: ${{ steps.parse.outputs.json }}
