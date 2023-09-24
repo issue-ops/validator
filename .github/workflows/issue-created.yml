@@ -53,7 +53,7 @@ jobs:
         id: validate
         uses: issue-ops/validator@main
         with:
-          issue-form-template: example-template.yml
+          issue-form-template: example-request.yml
           parsed-issue-body: ${{ steps.parse.outputs.json }}
           workspace: ${{ github.workspace }}
 
