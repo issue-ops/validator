@@ -14,8 +14,12 @@ export function validateInput(
   errors: string[]
 ): void {
   // Required input does not exist
-  if (props.required && (!issue[key] || issue[key] === ''))
+  if (props.required && !issue[key])
     errors.push(`Missing required input: ${key}`)
+
+  // Required input is an empty string
+  if (props.required && issue[key] === '')
+    errors.push(`Empty required input: ${key}`)
 
   // Inputs must be strings
   if (issue[key] && typeof issue[key] !== 'string')
