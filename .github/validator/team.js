@@ -42,18 +42,16 @@ module.exports = async (field) => {
     core.error('Field type is invalid')
     return 'failure'
   }
-  core.info('Field type is valid')
 
   try {
     // Check if the team exists
     core.info(`Checking if team ${field} exists`)
 
-    const response = await github.rest.teams.getByName({
+    await github.rest.teams.getByName({
       org: process.env.ORGANIZATION ?? '',
       team_slug: field
     })
 
-    core.info(JSON.stringify(response))
     core.info(`Team ${field} exists`)
     return 'success'
   } catch (error) {
