@@ -3,6 +3,7 @@
  */
 
 import fs from 'fs'
+import * as core from '@actions/core'
 import { validate } from '../src/validate'
 import * as input from '../src/validate/input'
 import * as textarea from '../src/validate/textarea'
@@ -20,6 +21,7 @@ describe('validate', () => {
   })
 
   it('validates each input type', async () => {
+    jest.spyOn(core, 'info').mockImplementation()
     jest.spyOn(input, 'validateInput').mockImplementation()
     jest.spyOn(textarea, 'validateTextarea').mockImplementation()
     jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
@@ -65,6 +67,7 @@ describe('validate', () => {
   })
 
   it('skips custom validation if no config is present', async () => {
+    jest.spyOn(core, 'info').mockImplementation()
     jest.spyOn(input, 'validateInput').mockImplementation()
     jest.spyOn(textarea, 'validateTextarea').mockImplementation()
     jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
@@ -88,6 +91,8 @@ describe('validate', () => {
   })
 
   it('passes custom validation if config is present and inputs are valid', async () => {
+    jest.spyOn(core, 'info').mockImplementation()
+    jest.spyOn(core, 'getInput').mockReturnValue('1234')
     jest.spyOn(input, 'validateInput').mockImplementation()
     jest.spyOn(textarea, 'validateTextarea').mockImplementation()
     jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
@@ -132,6 +137,9 @@ describe('validate', () => {
   })
 
   it('fails custom validation if config is present and inputs are invalid', async () => {
+    jest.spyOn(core, 'info').mockImplementation()
+    jest.spyOn(core, 'getInput').mockReturnValue('1234')
+    jest.spyOn(core, 'error').mockImplementation()
     jest.spyOn(input, 'validateInput').mockImplementation()
     jest.spyOn(textarea, 'validateTextarea').mockImplementation()
     jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
@@ -171,8 +179,8 @@ describe('validate', () => {
     )
 
     expect(errors).toEqual([
-      'Invalid read_team: Team IssueOps-Demo-Readers does not exist',
-      'Invalid write_team: Team IssueOps-Demo-Writers does not exist'
+      "Invalid read_team: Team 'IssueOps-Demo-Readers' does not exist",
+      "Invalid write_team: Team 'IssueOps-Demo-Writers' does not exist"
     ])
   })
 })
