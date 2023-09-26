@@ -5,8 +5,9 @@ import Handlebars from 'handlebars'
 /**
  * A custom Handlebars helper to nicely format newlines in markdown
  */
-Handlebars.registerHelper('newlines', function (input: string): string {
-  return input.replaceAll('\n', '<br>')
+Handlebars.registerHelper('newlines', (input: any): string => {
+  if (typeof input !== 'string') return JSON.stringify(input)
+  else return input.replaceAll('\n', '<br>')
 })
 
 /**
