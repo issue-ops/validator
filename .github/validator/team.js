@@ -9,9 +9,21 @@
  *
  *  You do not need to handle them all! It is up to the validator to determine
  *  which type(s) to expect, and how to handle them.
+ *
  * @returns {Promise<string>} An error message if validation fails, 'success' otherwise
  */
 module.exports = async (field) => {
+  // If you are importing libraries that are not included in the GitHub Actions
+  // runner image, you will need to make sure to include the following steps in
+  // your workflow file **before** running the validator action:
+  //
+  // - name: Setup Node.js
+  //   uses: actions/setup-node@vX.X.X
+  //   with:
+  //     node-version: 20
+  //
+  // - name: Install dependencies
+  //   run: npm install
   const { Octokit } = require('@octokit/rest')
 
   // You will need to set any required environment variables in the GitHub
