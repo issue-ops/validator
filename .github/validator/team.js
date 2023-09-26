@@ -36,12 +36,9 @@ module.exports = async (field) => {
     auth: core.getInput('github-token', { required: true })
   })
 
-  // If the field is not a string, return false. This is a custom validator, so
-  // you can define the rules for what is valid and what is not.
-  if (typeof field !== 'string') {
-    core.error('Field type is invalid')
-    return 'failure'
-  }
+  // If the field is not a string, return an error message. This is a custom
+  // validator, so you can define the rules for what is valid and what is not.
+  if (typeof field !== 'string') return 'Field type is invalid'
 
   try {
     // Check if the team exists
@@ -58,7 +55,7 @@ module.exports = async (field) => {
     if (error.status === 404) {
       // If the team does not exist, return an error message
       core.error(`Team ${field} does not exist`)
-      return 'failure'
+      return `Team ${field} does not exist`
     } else {
       // Otherwise, something else went wrong...
       throw error
