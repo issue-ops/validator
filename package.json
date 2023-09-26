@@ -1,7 +1,7 @@
 {
   "name": "validator",
   "description": "Validate issue form submissions",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Nick Alteen <ncalteen@github.com>",
   "homepage": "https://github.com/issue-ops/validator#readme",
   "repository": {
