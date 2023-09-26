@@ -119,12 +119,14 @@ export async function run(): Promise<void> {
   }
 
   // Set outputs
+  core.info('Setting outputs...')
+
   if (errors.length === 0) {
-    core.setOutput('result', 'failure')
-    core.setOutput('errors', JSON.stringify(errors))
-  } else {
     core.setOutput('result', 'success')
     core.setOutput('errors', '')
+  } else {
+    core.setOutput('result', 'failure')
+    core.setOutput('errors', JSON.stringify(errors))
   }
 
   core.info('Action complete!')
