@@ -50,6 +50,7 @@ export async function run(): Promise<void> {
     core.setFailed(`Template not found: ${template}`)
     return
   }
+  core.info(`Template found: ${template}`)
 
   // Read and parse the template
   const parsedTemplate: { [key: string]: FormattedField } = await parseTemplate(
@@ -57,6 +58,7 @@ export async function run(): Promise<void> {
       fs.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8')
     )
   )
+  core.info(`Template parsed: ${JSON.stringify(parsedTemplate)}`)
 
   // Validate the parsed issue against the template
   const errors: string[] = await validate(
@@ -65,9 +67,15 @@ export async function run(): Promise<void> {
     workspace
   )
 
+  core.info('Validation complete!')
+  if (errors.length > 0) core.info(`Errors found: ${JSON.stringify(errors)}`)
+  else core.info('No errors found!')
+
   let body: string
 
   if (addComment) {
+    core.info('Adding comment to issue...')
+
     if (errors.length > 0) {
       // Add a comment to the issue with the error(s).
       if (fs.existsSync(`${workspace}/.github/validator/failure.mustache`)) {
