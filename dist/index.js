@@ -15188,12 +15188,20 @@ async function run() {
         core.setFailed(`Template not found: ${template}`);
         return;
     }
+    core.info(`Template found: ${template}`);
     // Read and parse the template
     const parsedTemplate = await (0, parse_1.parseTemplate)(yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8')));
+    core.info(`Template parsed: ${JSON.stringify(parsedTemplate)}`);
     // Validate the parsed issue against the template
     const errors = await (0, validate_1.validate)(parsedTemplate, parsedIssue, workspace);
+    core.info('Validation complete!');
+    if (errors.length > 0)
+        core.info(`Errors found: ${JSON.stringify(errors)}`);
+    else
+        core.info('No errors found!');
     let body;
     if (addComment) {
+        core.info('Adding comment to issue...');
         if (errors.length > 0) {
             // Add a comment to the issue with the error(s).
             if (fs_1.default.existsSync(`${workspace}/.github/validator/failure.mustache`)) {
@@ -15231,13 +15239,14 @@ async function run() {
         });
     }
     // Set outputs
+    core.info('Setting outputs...');
     if (errors.length === 0) {
-        core.setOutput('result', 'failure');
-        core.setOutput('errors', JSON.stringify(errors));
-    }
-    else {
         core.setOutput('result', 'success');
         core.setOutput('errors', '');
+    }
+    else {
+        core.setOutput('result', 'failure');
+        core.setOutput('errors', JSON.stringify(errors));
     }
     core.info('Action complete!');
 }
@@ -15269,6 +15278,7 @@ const handlebars_1 = __importDefault(__nccwpck_require__(7492));
 function compileTemplate(template, ctx) {
     // Load the template
     const templateFile = fs_1.default.readFileSync(template, 'utf8');
+    // eslint-disable-next-line no-undef
     const compiledTemplate = handlebars_1.default.compile(templateFile);
     return (0, dedent_js_1.default)(compiledTemplate(ctx));
 }
