@@ -1,6 +1,13 @@
 import dedent from 'dedent-js'
 import fs from 'fs'
-import handlebars from 'handlebars'
+import Handlebars from 'handlebars'
+
+/**
+ * A custom Handlebars helper to nicely format newlines in markdown
+ */
+Handlebars.registerHelper('newlines', function (input: string): string {
+  return input.replaceAll('\n', '<br>')
+})
 
 /**
  * Compile a message using a given template and context
@@ -15,7 +22,7 @@ export function compileTemplate(template: string, ctx: object): string {
 
   // eslint-disable-next-line no-undef
   const compiledTemplate: HandlebarsTemplateDelegate<any> =
-    handlebars.compile(templateFile)
+    Handlebars.compile(templateFile)
 
   return dedent(compiledTemplate(ctx))
 }
