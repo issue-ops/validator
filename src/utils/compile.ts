@@ -12,6 +12,8 @@ import handlebars from 'handlebars'
 export function compileTemplate(template: string, ctx: object): string {
   // Load the template
   const templateFile: string = fs.readFileSync(template, 'utf8')
+
+  // eslint-disable-next-line no-undef
   const compiledTemplate: HandlebarsTemplateDelegate<any> =
     handlebars.compile(templateFile)
 
