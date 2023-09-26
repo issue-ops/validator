@@ -37,16 +37,18 @@ export async function validate(
   if (!fs.existsSync(`${workspace}/.github/validator/config.yml`)) return errors
 
   // Read validator config from ./.github/validator/config.yml
-  const config = YAML.parse(
+  const config: any = YAML.parse(
     fs.readFileSync(`${workspace}/.github/validator/config.yml`, 'utf8')
   )
 
   for (const validator of config.validators) {
     // Import the script for the validator
-    const script = require(`${workspace}/.github/validator/${validator.script}`)
+    const script: any = require(
+      `${workspace}/.github/validator/${validator.script}`
+    )
 
     // Run the method, passing in the issue data for that field (if any)
-    const result = await script(issue[validator.field])
+    const result: string = await script(issue[validator.field])
 
     // If the script returns an error, add it to the list
     if (result !== 'success')

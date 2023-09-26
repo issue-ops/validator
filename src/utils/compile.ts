@@ -11,8 +11,9 @@ import handlebars from 'handlebars'
  */
 export function compileTemplate(template: string, ctx: object): string {
   // Load the template
-  const templateFile = fs.readFileSync(template, 'utf8')
-  const compiledTemplate = handlebars.compile(templateFile)
+  const templateFile: string = fs.readFileSync(template, 'utf8')
+  const compiledTemplate: HandlebarsTemplateDelegate<any> =
+    handlebars.compile(templateFile)
 
   return dedent(compiledTemplate(ctx))
 }
