@@ -15269,6 +15269,15 @@ const dedent_js_1 = __importDefault(__nccwpck_require__(3159));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const handlebars_1 = __importDefault(__nccwpck_require__(7492));
 /**
+ * A custom Handlebars helper to nicely format newlines in markdown
+ */
+handlebars_1.default.registerHelper('newlines', (input) => {
+    if (typeof input !== 'string')
+        return JSON.stringify(input);
+    else
+        return input.replaceAll('\n', '<br>');
+});
+/**
  * Compile a message using a given template and context
  *
  * @param template The template to compile
@@ -15368,6 +15377,29 @@ exports.parseTemplate = parseTemplate;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15375,6 +15407,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.validate = void 0;
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const yaml_1 = __importDefault(__nccwpck_require__(4083));
+const core = __importStar(__nccwpck_require__(2186));
 const input_1 = __nccwpck_require__(4823);
 const textarea_1 = __nccwpck_require__(1228);
 const dropdown_1 = __nccwpck_require__(7229);
@@ -15388,6 +15421,7 @@ const checkboxes_1 = __nccwpck_require__(4464);
  */
 async function validate(template, issue, workspace) {
     const errors = [];
+    core.info('Starting standard validation');
     for (const [key, props] of Object.entries(template)) {
         // Type-specific validations
         if (props.type === 'input') {
@@ -15404,15 +15438,19 @@ async function validate(template, issue, workspace) {
         }
     }
     // If there is no config file, return the normal validation errors
-    if (!fs_1.default.existsSync(`${workspace}/.github/validator/config.yml`))
+    if (!fs_1.default.existsSync(`${workspace}/.github/validator/config.yml`)) {
+        core.info('No validator config file found, returning standard errors');
         return errors;
+    }
     // Read validator config from ./.github/validator/config.yml
     const config = yaml_1.default.parse(fs_1.default.readFileSync(`${workspace}/.github/validator/config.yml`, 'utf8'));
     for (const validator of config.validators) {
+        core.info(`Running custom validator '${validator.script}' on '${validator.field}'`);
         // Import the script for the validator
         const script = require(`${workspace}/.github/validator/${validator.script}`);
         // Run the method, passing in the issue data for that field (if any)
         const result = await script(issue[validator.field]);
+        core.info(`Result: ${result}`);
         // If the script returns an error, add it to the list
         if (result !== 'success')
             errors.push(`Invalid ${validator.field}: ${result}`);
