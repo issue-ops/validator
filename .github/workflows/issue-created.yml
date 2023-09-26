@@ -47,12 +47,25 @@ jobs:
           issue-form-template: example-request.yml
           workspace: ${{ github.workspace }}
 
+      # If you have custom validators that need to access any GitHub APIs not
+      # controlled by GitHub Actions permissions, you will need to provide a PAT
+      # or generate a GitHub App token and pass it to the validator. For
+      # example, this token has permissions to read organization teams in order
+      # to validate that teams specified in the issue body actually exist.
+      - name: Generate App Token
+        id: token
+        uses: actions/create-github-app-token@v1
+        with:
+          app_id: ${{ secrets.ISSUEOPS_DEMO_APP_ID }}
+          private_key: ${{ secrets.ISSUEOPS_DEMO_APP_KEY }}
+
       # Validate the parsed issue body against the issue form template and any
       # custom validation scripts.
       - name: Validate Issue
         id: validate
         uses: issue-ops/validator@main
         with:
+          github-token: ${{ steps.token.outputs.token }}
           issue-form-template: example-request.yml
           parsed-issue-body: ${{ steps.parse.outputs.json }}
           workspace: ${{ github.workspace }}
