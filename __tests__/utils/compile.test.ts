@@ -9,10 +9,9 @@ const template = fs.readFileSync(
   '__tests__/fixtures/example/success.mustache',
   'utf8'
 )
-const compiledTemplate = fs.readFileSync(
-  '__tests__/fixtures/example/compiled-success.md',
-  'utf8'
-)
+const compiledTemplate = fs
+  .readFileSync('__tests__/fixtures/example/compiled-success.md', 'utf8')
+  .trim()
 const parsedIssue = JSON.parse(
   fs.readFileSync('__tests__/fixtures/example/parsed-issue.json', 'utf8')
 )
