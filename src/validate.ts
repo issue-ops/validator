@@ -48,7 +48,7 @@ export async function validate(
 
   for (const validator of config.validators) {
     core.info(
-      `Running custom validator ${validator.script} on ${validator.field}`
+      `Running custom validator '${validator.script}' on '${validator.field}'`
     )
 
     // Import the script for the validator
