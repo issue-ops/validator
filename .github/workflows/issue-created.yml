@@ -60,10 +60,13 @@ jobs:
           private_key: ${{ secrets.ISSUEOPS_DEMO_APP_KEY }}
 
       # Validate the parsed issue body against the issue form template and any
-      # custom validation scripts.
+      # custom validation scripts. You can also pass in additional inputs as
+      # environment variables.
       - name: Validate Issue
         id: validate
         uses: issue-ops/validator@main
+        env:
+          ORGANIZATION: issue-ops
         with:
           github-token: ${{ steps.token.outputs.token }}
           issue-form-template: example-request.yml
