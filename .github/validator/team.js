@@ -36,21 +36,34 @@ module.exports = async (field) => {
     auth: core.getInput('github-token', { required: true })
   })
 
-  // If the field is not a string, return false
-  if (typeof field !== 'string') return 'Invalid field type'
+  // If the field is not a string, return false. This is a custom validator, so
+  // you can define the rules for what is valid and what is not.
+  if (typeof field !== 'string') {
+    core.error('Field type is invalid')
+    return 'failure'
+  }
+  core.info('Field type is valid')
 
-  // Check if the team exists
   try {
-    await github.rest.teams.getByName({
+    // Check if the team exists
+    core.info(`Checking if team ${field} exists`)
+
+    const response = await github.rest.teams.getByName({
       org: process.env.ORGANIZATION ?? '',
       team_slug: field
     })
 
+    core.info(JSON.stringify(response))
+    core.info(`Team ${field} exists`)
     return 'success'
   } catch (error) {
-    // If the team does not exist, return an error message
-    if (error.status === 404) return `Team ${field} does not exist`
-    // Otherwise, throw the exception
-    else throw error
+    if (error.status === 404) {
+      // If the team does not exist, return an error message
+      core.error(`Team ${field} does not exist`)
+      return 'failure'
+    } else {
+      // Otherwise, something else went wrong...
+      throw error
+    }
   }
 }
