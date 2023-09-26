@@ -25,14 +25,15 @@ module.exports = async (field) => {
   // - name: Install dependencies
   //   run: npm install
   const { Octokit } = require('@octokit/rest')
+  const core = require('@actions/core')
 
-  // You will need to set any required environment variables in the GitHub
-  // Actions workflow file that runs the validator action. This is how you can
-  // specify inputs to the custom validators. In this case, you will need to
-  // set the `GITHUB_TOKEN` environment variable to a token that has access to
+  // You will need to set any required inputs or environment variables in the
+  // GitHub Actions workflow file that runs the `issue-ops/validator` action.
+  // This is how you can specify inputs to the custom validators. In this case,
+  // you will need to set the authentication token for the GitHub API so you can
   // read GitHub Teams in your organization.
   const github = new Octokit({
-    auth: process.env.GITHUB_TOKEN
+    auth: core.getInput('github-token', { required: true })
   })
 
   // If the field is not a string, return false
