@@ -42,20 +42,20 @@ module.exports = async (field) => {
 
   try {
     // Check if the team exists
-    core.info(`Checking if team ${field} exists`)
+    core.info(`Checking if team '${field}' exists`)
 
     await github.rest.teams.getByName({
       org: process.env.ORGANIZATION ?? '',
       team_slug: field
     })
 
-    core.info(`Team ${field} exists`)
+    core.info(`Team '${field}' exists`)
     return 'success'
   } catch (error) {
     if (error.status === 404) {
       // If the team does not exist, return an error message
-      core.error(`Team ${field} does not exist`)
-      return `Team ${field} does not exist`
+      core.error(`Team '${field}' does not exist`)
+      return `Team '${field}' does not exist`
     } else {
       // Otherwise, something else went wrong...
       throw error
