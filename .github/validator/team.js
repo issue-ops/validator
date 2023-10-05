@@ -1,16 +1,18 @@
 /**
- * Checks if a team exists
+ * Example custom validator script: checks if a team exists
+ *
  * @param {string | string[] | {label: string; required: boolean }} field The input field.
  *
  * This can be one of several types:
- *  - A string, which is the value of the field (e.g. "my-team").
- *  - An array of strings, which are the values of the field (e.g. ["my-team"]).
- *  - An object with a `label` and `required` property. This is used for checkboxes.
+ *  - `string` -> The value of the field (e.g. `'my-team'`)
+ *  - `string[]` -> The value(s) of the field (e.g. `['team-1', 'team-2']`)
+ *  - A checkboxes object with a `label` and `required` property (e.g.
+ *    `{ label: 'my-team', required: true }`)
  *
- *  You do not need to handle them all! It is up to the validator to determine
- *  which type(s) to expect, and how to handle them.
+ *  You do not need to handle them all! It is up to the individual validation
+ *  script to define which type(s) to expect and how to handle them.
  *
- * @returns {Promise<string>} An error message if validation fails, 'success' otherwise
+ * @returns {Promise<string>} An error message or `'success'`
  */
 module.exports = async (field) => {
   // If you are importing libraries that are not included in the GitHub Actions
@@ -24,6 +26,9 @@ module.exports = async (field) => {
   //
   // - name: Install dependencies
   //   run: npm install
+  //
+  // For example, the above would be required here since we are importing the
+  // `@octokit/rest` library to make requests to the GitHub API.
   const { Octokit } = require('@octokit/rest')
   const core = require('@actions/core')
 
@@ -36,8 +41,11 @@ module.exports = async (field) => {
     auth: core.getInput('github-token', { required: true })
   })
 
-  // If the field is not a string, return an error message. This is a custom
-  // validator, so you can define the rules for what is valid and what is not.
+  // In this validator, the only type of input we are expecting is a `string` (a
+  // team name). If the field is not a string, return an error message. In each
+  // custom validator, you can define the rules for what is valid input and what
+  // is not. In other cases, you may want to only accept lists of strings
+  // (dropdown) or lists of objects (checkboxes). It is up to you!
   if (typeof field !== 'string') return 'Field type is invalid'
 
   try {
