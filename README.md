@@ -13,7 +13,7 @@ Validate issue form submissions
 
 This action is designed to be used in conjunction with
 [issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository#creating-issue-forms)
-to allow you to validate submitted issues against their template, as well as
+to allow you to validate submitted issues against their template, as well as any
 developer-defined logic.
 
 Out of the box, this action supports validating the following details based on
@@ -56,7 +56,7 @@ on:
 
 jobs:
   validate:
-    name: Parse and Validate Issue
+    name: Validate Issue
     runs-on: ubuntu-latest
 
     steps:
@@ -77,6 +77,69 @@ jobs:
 
       # Validate the parsed issue body against the issue form template. This
       # example does not use custom validators.
+      - name: Validate Issue
+        id: validate
+        uses: issue-ops/validator@vX.X.X
+        with:
+          issue-form-template: example-request.yml
+          parsed-issue-body: ${{ steps.parse.outputs.json }}
+          workspace: ${{ github.workspace }}
+
+      - name: Output Validation Results
+        id: output
+        run: |
+          echo "Result: ${{ steps.validate.outputs.result }}"
+          echo "Errors: ${{ steps.validate.outputs.errors }}"
+```
+
+As a more complex example, suppose you want to include custom validation logic
+that relies on additional npm libraries. In this case, you would need to ensure
+those libraries are available on the runner before validation takes place.
+
+```yaml
+name: Issue Opened/Edited
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+
+jobs:
+  validate:
+    name: Validate Issue with Custom Logic
+    runs-on: ubuntu-latest
+
+    steps:
+      # This is required to access the repository's files. Specifically, the
+      # issue forms template and the additional validation configuration.
+      - name: Checkout Repository
+        id: checkout
+        uses: actions/checkout@vX.X.X
+
+      # Install Node.js on the runner.
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@vX.X.X
+        with:
+          node-version: 20
+
+      # Install dependencies from `package.json`.
+      - name: Install Dependencies
+        id: install
+        run: npm install
+
+      # Parse the issue body and convert it to JSON.
+      - name: Parse Issue Body
+        id: parse
+        uses: issue-ops/parser@vX.X.X
+        with:
+          body: ${{ github.event.issue.body }}
+          issue-form-template: example-request.yml
+          workspace: ${{ github.workspace }}
+
+      # Validate the parsed issue body against the issue form template. This
+      # example does use custom validators.
       - name: Validate Issue
         id: validate
         uses: issue-ops/validator@vX.X.X
@@ -118,8 +181,8 @@ jobs:
 ## Custom Validators
 
 This action supports custom validation logic in the form of a configuration file
-and additional JavaScript or TypeScript files in the repository where you are
-calling this action. For example, the
+and additional **JavaScript** files in the repository where you are calling this
+action. For example, the
 [New Thing Request](https://github.com/issue-ops/validator/issues/new?template=example-request.yml)
 issue form validates that the **Read Team** and **Write Team** inputs are valid
 GitHub Teams.
@@ -127,7 +190,7 @@ GitHub Teams.
 Check out the following sections for instructions on how to set this up in your
 repository!
 
-### Configuration File
+### Step 1: Configuration File
 
 First, a configuration file must be created at `.github/validator/config.yml`.
 The content of the file should follow the below format:
@@ -146,10 +209,10 @@ validators:
 |          | Must be camel-cased, and all special characters removed         |
 |          | This matches the output format of the `issue-ops/parser` action |
 |          | E.g. `My Input Name :D` -> `my_input_name`                      |
-| `script` | The path and name to the script to call                         |
+| `script` | The path and name of the script to call                         |
 |          | Relative to the `validator` directory                           |
 
-### Validation Script
+### Step 2: Validation Script
 
 Next, you must include any validation script(s) referenced in `config.yml`.
 These scripts must have the following behavior:
@@ -158,15 +221,15 @@ These scripts must have the following behavior:
   - `string` (Input and Textarea)
   - `string[]` (Dropdown)
   - `{label: string; required: boolean }` (Checkboxes)
-- Return `success` for successful validation
+- Return `'success'` for successful validation
 - Return an error message (`string`) for unsuccessful validation
 
 For an example, see [`team.js`](./.github/validator/team.js).
 
 _**Isn't running arbitrary scripts dangerous?**_
 
-Yes! That's why it is highly recommended to only use this action on event types
-such as
+:fire: Yes! :fire: That's why it is highly recommended to only use this action
+on event types such as
 [`on: issues`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#issues).
 In GitHub Actions, certain triggers use files from non-default branches. This
 can be a big security risk when arbitrary scripts are involved.
@@ -178,9 +241,9 @@ Along with this, you must make sure to not pull branches with untrusted
 validation scripts into the workspace where this action is run (by default the
 `actions/checkout` action will pull the default branch).
 
-### Third-Party Libraries
+### Step 3: Additional Libraries
 
-If your custom validator requires third-party libraries that are not included on
+If your custom validator requires libraries that are not included on
 [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-software)
 (or not installed on self-hosted runners), you will need to include additional
 steps in the workflow to ensure that they are available before this action runs.
@@ -188,6 +251,11 @@ For example, if you wanted to include the `yaml` library for parsing YAML files,
 you would need to do the following:
 
 1. Create a `package.json` in your repository
+
+   ```bash
+   npm init -y
+   ```
+
 1. Install the `yaml` library
 
    ```bash
@@ -240,7 +308,7 @@ you would need to do the following:
        workspace: ${{ github.workspace }}
    ```
 
-### GitHub API Permissions
+## GitHub API Permissions
 
 By default, the GitHub token available to workflows has specific permissions
 that are limited to the repository the workflow is running in. If you have
@@ -272,18 +340,25 @@ action to generate a token and pass it to the validation step.
     workspace: ${{ github.workspace }}
 ```
 
-## Comments
+## Comment Templates
 
 If the `add-comment` input is set to `true`, a comment will be added to the
 issue that triggered the action. The comment will include the results of the
 validation job. By default, the comments look like this:
 
-<!--markdownlint-disable MD033 -->
+Default success comment:
 
-| Result  | Comment                                                                        |
-| ------- | ------------------------------------------------------------------------------ |
-| Success | :tada: Issue validated successfully!                                           |
-| Failure | :no_entry: There were errors validating the issue body:<br><br>- Error message |
+```plain
+:tada: Issue validated successfully!
+```
+
+Default failure comment:
+
+```plain
+:no_entry: There were errors validating the issue body:
+
+- Error message
+```
 
 You can customize the success/failure comments by including custom templates in
 the `.github/validator/` directory. If either template is present, it will be
