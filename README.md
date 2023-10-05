@@ -159,7 +159,7 @@ jobs:
 
 | Input                 | Description                                                   |
 | --------------------- | ------------------------------------------------------------- |
-| `add-comment`         | Add a [success/failure comment](#comments)                    |
+| `add-comment`         | Add a [success/failure comment](#comment-templates)           |
 |                       | Default: `true`                                               |
 | `github-token`        | GitHub PAT for authentication                                 |
 |                       | Default: `${{ github.token }}`                                |
