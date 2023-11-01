@@ -90,7 +90,7 @@
     "@octokit/rest": "^20.0.2",
     "dedent-js": "^1.0.1",
     "handlebars": "^4.7.8",
-    "yaml": "^2.3.2"
+    "yaml": "^2.3.3"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
