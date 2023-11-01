@@ -30,14 +30,13 @@ jest.mock('@octokit/rest', () => ({
   Octokit: jest.fn()
 }))
 
-jest.spyOn(core, 'info').mockImplementation()
-jest.spyOn(core, 'setFailed').mockImplementation()
-jest.spyOn(core, 'setOutput').mockImplementation()
-
 describe('main', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    jest.resetAllMocks()
+
+    jest.spyOn(core, 'info').mockImplementation()
+    jest.spyOn(core, 'setFailed').mockImplementation()
+    jest.spyOn(core, 'setOutput').mockImplementation()
   })
 
   it('retrieves the inputs', async () => {
