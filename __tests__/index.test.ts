@@ -4,12 +4,18 @@
 
 import * as main from '../src/main'
 
-describe('index', () => {
-  it('calls run when imported', async () => {
-    jest.spyOn(main, 'run').mockImplementation()
+let runMock: jest.SpyInstance
 
+describe('index', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+
+    runMock = jest.spyOn(main, 'run').mockImplementation()
+  })
+
+  it('calls run when imported', async () => {
     require('../src/index')
 
-    expect(main.run).toHaveBeenCalled()
+    expect(runMock).toHaveBeenCalled()
   })
 })

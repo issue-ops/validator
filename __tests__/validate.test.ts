@@ -18,14 +18,16 @@ jest.mock('@octokit/rest', () => ({
 describe('validate', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-  })
 
-  it('validates each input type', async () => {
+    jest.spyOn(core, 'error').mockImplementation()
     jest.spyOn(core, 'info').mockImplementation()
     jest.spyOn(input, 'validateInput').mockImplementation()
     jest.spyOn(textarea, 'validateTextarea').mockImplementation()
     jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
     jest.spyOn(checkboxes, 'validateCheckboxes').mockImplementation()
+  })
+
+  it('validates each input type', async () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(false)
 
     await validate(
@@ -67,11 +69,6 @@ describe('validate', () => {
   })
 
   it('skips custom validation if no config is present', async () => {
-    jest.spyOn(core, 'info').mockImplementation()
-    jest.spyOn(input, 'validateInput').mockImplementation()
-    jest.spyOn(textarea, 'validateTextarea').mockImplementation()
-    jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
-    jest.spyOn(checkboxes, 'validateCheckboxes').mockImplementation()
     jest.spyOn(fs, 'existsSync').mockReturnValue(false)
 
     const errors: string[] = await validate(
@@ -91,12 +88,7 @@ describe('validate', () => {
   })
 
   it('passes custom validation if config is present and inputs are valid', async () => {
-    jest.spyOn(core, 'info').mockImplementation()
     jest.spyOn(core, 'getInput').mockReturnValue('1234')
-    jest.spyOn(input, 'validateInput').mockImplementation()
-    jest.spyOn(textarea, 'validateTextarea').mockImplementation()
-    jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
-    jest.spyOn(checkboxes, 'validateCheckboxes').mockImplementation()
     jest.spyOn(fs, 'existsSync').mockReturnValue(true)
 
     const mocktokit = {
@@ -137,13 +129,7 @@ describe('validate', () => {
   })
 
   it('fails custom validation if config is present and inputs are invalid', async () => {
-    jest.spyOn(core, 'info').mockImplementation()
     jest.spyOn(core, 'getInput').mockReturnValue('1234')
-    jest.spyOn(core, 'error').mockImplementation()
-    jest.spyOn(input, 'validateInput').mockImplementation()
-    jest.spyOn(textarea, 'validateTextarea').mockImplementation()
-    jest.spyOn(dropdown, 'validateDropdown').mockImplementation()
-    jest.spyOn(checkboxes, 'validateCheckboxes').mockImplementation()
     jest.spyOn(fs, 'existsSync').mockReturnValue(true)
 
     const mocktokit = {
