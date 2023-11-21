@@ -41,7 +41,7 @@ jobs:
       # Parse the issue body and convert it to JSON.
       - name: Parse Issue Body
         id: parse
-        uses: issue-ops/parser@v0.2.1
+        uses: issue-ops/parser@v0.2.2
         with:
           body: ${{ github.event.issue.body }}
           issue-form-template: example-request.yml
@@ -56,8 +56,8 @@ jobs:
         id: token
         uses: actions/create-github-app-token@v1
         with:
-          app_id: ${{ secrets.ISSUEOPS_DEMO_APP_ID }}
-          private_key: ${{ secrets.ISSUEOPS_DEMO_APP_KEY }}
+          app-id: ${{ secrets.ISSUEOPS_DEMO_APP_ID }}
+          private-key: ${{ secrets.ISSUEOPS_DEMO_APP_KEY }}
 
       # Validate the parsed issue body against the issue form template and any
       # custom validation scripts. You can also pass in additional inputs as
