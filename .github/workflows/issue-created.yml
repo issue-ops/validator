@@ -41,7 +41,7 @@ jobs:
       # Parse the issue body and convert it to JSON.
       - name: Parse Issue Body
         id: parse
-        uses: issue-ops/parser@v0.2.3
+        uses: issue-ops/parser@v0.3.0
         with:
           body: ${{ github.event.issue.body }}
           issue-form-template: example-request.yml
