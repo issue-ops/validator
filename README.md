@@ -4,7 +4,7 @@
 [![CodeQL](https://github.com/issue-ops/validator/actions/workflows/codeql.yml/badge.svg)](https://github.com/issue-ops/validator/actions/workflows/codeql.yml)
 [![Continuous Integration](https://github.com/issue-ops/validator/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/issue-ops/validator/actions/workflows/continuous-integration.yml)
 [![Continuous Delivery](https://github.com/issue-ops/validator/actions/workflows/continuous-delivery.yml/badge.svg)](https://github.com/issue-ops/validator/actions/workflows/continuous-delivery.yml)
-[![Linter](https://github.com/issue-ops/validator/actions/workflows/super-linter.yml/badge.svg)](https://github.com/issue-ops/validator/actions/workflows/linter.yml)
+[![Linter](https://github.com/issue-ops/validator/actions/workflows/linter.yml/badge.svg)](https://github.com/issue-ops/validator/actions/workflows/linter.yml)
 [![Code Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
 Validate issue form submissions
