@@ -14,7 +14,7 @@
  *
  * @returns {Promise<string>} An error message or `'success'`
  */
-module.exports = async (field) => {
+export default async (field) => {
   // If you are importing libraries that are not included in the GitHub Actions
   // runner image, you will need to make sure to include the following steps in
   // your workflow file **before** running the validator action:
@@ -29,8 +29,8 @@ module.exports = async (field) => {
   //
   // For example, the above would be required here since we are importing the
   // `@octokit/rest` library to make requests to the GitHub API.
-  const { Octokit } = require('@octokit/rest')
-  const core = require('@actions/core')
+  const { Octokit } = await import('@octokit/rest')
+  const core = await import('@actions/core')
 
   // You will need to set any required inputs or environment variables in the
   // GitHub Actions workflow file that runs the `issue-ops/validator` action.

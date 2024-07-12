@@ -1,4 +1,4 @@
-import { FormattedField, ParsedBody } from '../interfaces'
+import { FormattedField, ParsedBody } from '../interfaces.js'
 
 /**
  * Validates the parsed issue body section as a textarea type

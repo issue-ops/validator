@@ -9,6 +9,13 @@
 
 Validate issue form submissions
 
+> [!IMPORTANT]
+>
+> As of version `v2.0.0`, this action has been converted to ESM. Because of
+> this, custom validation scripts must be provided in ESM syntax. If you are
+> using CommonJS, you will need to convert your scripts to ESM. See
+> [`team.js`](./.github/validator/team.js) for an example.
+
 ## About
 
 This action is designed to be used in conjunction with
@@ -157,19 +164,18 @@ jobs:
 
 ## Inputs
 
-| Input                 | Description                                                   |
-| --------------------- | ------------------------------------------------------------- |
-| `add-comment`         | Add a [success/failure comment](#comment-templates)           |
-|                       | Default: `true`                                               |
-| `github-token`        | GitHub PAT for authentication                                 |
-|                       | Default: `${{ github.token }}`                                |
-| `issue-form-template` | Template `.yml` file in `.github/ISSUE_TEMPLATE`              |
-| `issue-number`        | The issue number to validate                                  |
-|                       | Default: `${{ github.event.issue.number }}`                   |
-| `parsed-issue-body`   | The parsed issue body to validate                             |
-|                       | See [`issue-ops/parser`](https://github.com/issue-ops/parser) |
-| `workspace`           | The path on the runner where the repository was cloned        |
-|                       | Default: `${{ github.workspace }}`                            |
+| Input                 | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `add-comment`         | Add a [success/failure comment](#comment-templates) |
+|                       | Default: `true`                                     |
+| `github-token`        | GitHub PAT for authentication                       |
+|                       | Default: `${{ github.token }}`                      |
+| `issue-form-template` | Template `.yml` file in `.github/ISSUE_TEMPLATE`    |
+| `issue-number`        | The issue number to validate                        |
+|                       | Default: `${{ github.event.issue.number }}`         |
+| `parsed-issue-body`   | The parsed issue body to validate                   |
+| `workspace`           | The path where the repository was cloned            |
+|                       | Default: `${{ github.workspace }}`                  |
 
 ## Outputs
 

@@ -1,9 +1,5 @@
-/**
- * Unit tests for the parser, src/parse.ts
- */
-
-import * as parse from '../../src/utils/parse'
-import { IssueFormTemplate } from '../../src/interfaces'
+import { IssueFormTemplate } from '../../src/interfaces.js'
+import * as parse from '../../src/utils/parse.js'
 
 describe('parseTemplate', () => {
   it('parses issue form templates', async () => {

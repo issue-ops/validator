@@ -1,11 +1,12 @@
+import * as core from '@actions/core'
 import fs from 'fs'
 import YAML from 'yaml'
-import * as core from '@actions/core'
-import { FormattedField, ParsedBody } from './interfaces'
-import { validateInput } from './validate/input'
-import { validateTextarea } from './validate/textarea'
-import { validateDropdown } from './validate/dropdown'
-import { validateCheckboxes } from './validate/checkboxes'
+import { FormattedField, ParsedBody } from './interfaces.js'
+import type { ValidatorConfig } from './types.js'
+import { validateCheckboxes } from './validate/checkboxes.js'
+import { validateDropdown } from './validate/dropdown.js'
+import { validateInput } from './validate/input.js'
+import { validateTextarea } from './validate/textarea.js'
 
 /**
  * Validates the parsed issue body against the parsed issue form template
@@ -42,7 +43,7 @@ export async function validate(
   }
 
   // Read validator config from ./.github/validator/config.yml
-  const config: any = YAML.parse(
+  const config: ValidatorConfig = YAML.parse(
     fs.readFileSync(`${workspace}/.github/validator/config.yml`, 'utf8')
   )
 
@@ -52,9 +53,10 @@ export async function validate(
     )
 
     // Import the script for the validator
-    const script: any = require(
-      `${workspace}/.github/validator/${validator.script}`
-    )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const script: any = (
+      await import(`${workspace}/.github/validator/${validator.script}`)
+    ).default
 
     // Run the method, passing in the issue data for that field (if any)
     const result: string = await script(issue[validator.field])

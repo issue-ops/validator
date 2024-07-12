@@ -1,8 +1,4 @@
-/**
- * Unit tests for the action's format.ts file.
- */
-
-import { formatKey } from '../../src/utils/format'
+import { formatKey } from '../../src/utils/format.js'
 
 describe('formatKey', () => {
   it('removes non-alphanumeric characters', async () => {

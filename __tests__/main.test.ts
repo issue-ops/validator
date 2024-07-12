@@ -1,67 +1,76 @@
-/**
- * Unit tests for the action's index.ts file.
- */
+import { jest } from '@jest/globals'
+import { RestEndpointMethodTypes } from '@octokit/rest'
 import fs, { PathLike, PathOrFileDescriptor } from 'fs'
-import * as core from '@actions/core'
-import * as main from '../src/main'
-import * as validate from '../src/validate'
-import * as compile from '../src/utils/compile'
+import * as core from '../__fixtures__/core.js'
+import * as octokit from '../__fixtures__/octokit.js'
+
+jest.unstable_mockModule('@actions/core', () => core)
+jest.unstable_mockModule('@octokit/rest', async () => {
+  class Octokit {
+    constructor() {
+      return octokit
+    }
+  }
+
+  return {
+    Octokit
+  }
+})
+jest.unstable_mockModule('../src/utils/compile.js', () => ({
+  compileTemplate: jest.fn()
+}))
+jest.unstable_mockModule('../src/validate.js', () => ({
+  validate: jest.fn()
+}))
+
+const main = await import('../src/main.js')
+const compile = await import('../src/utils/compile.js')
+const validate = await import('../src/validate.js')
+const { Octokit } = await import('@octokit/rest')
+
+const mocktokit = jest.mocked(new Octokit())
 
 // Get the expected data (before mocking fs)
 const parsedIssue: string = fs.readFileSync(
-  '__tests__/fixtures/example/parsed-issue.json',
+  '__fixtures__/examples/parsed-issue.json',
   'utf-8'
 )
 const template: string = fs.readFileSync(
-  '__tests__/fixtures/example/template.yml',
+  '__fixtures__/examples/template.yml',
   'utf-8'
 )
 const failureMustache: string = fs.readFileSync(
-  '__tests__/fixtures/example/failure.mustache',
+  '__fixtures__/examples/failure.mustache',
   'utf-8'
 )
 const successMustache: string = fs.readFileSync(
-  '__tests__/fixtures/example/success.mustache',
+  '__fixtures__/examples/success.mustache',
   'utf-8'
 )
 
-// Mocks
-jest.mock('@octokit/rest', () => ({
-  Octokit: jest.fn()
-}))
-
-describe('main', () => {
+describe('main.ts', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    mocktokit.rest.teams.getByName.mockResolvedValue({
+      data: {
+        id: 1
+      }
+    } as RestEndpointMethodTypes['teams']['getByName']['response'])
 
-    jest.spyOn(core, 'info').mockImplementation()
-    jest.spyOn(core, 'setFailed').mockImplementation()
-    jest.spyOn(core, 'setOutput').mockImplementation()
+    core.getInput
+      .mockReturnValueOnce('true') // add-comment
+      .mockReturnValueOnce('1') // issue-number
+      .mockReturnValueOnce(parsedIssue) // parsed-issue-body
+      .mockReturnValueOnce('issue-ops/validator') // repository
+      .mockReturnValueOnce('example-request.yml') // issue-form-template
+      .mockReturnValueOnce('12345') // github-token
+      .mockReturnValueOnce(process.cwd()) // workspace
   })
 
-  it('retrieves the inputs', async () => {
-    jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
-      switch (name) {
-        case 'add-comment':
-          return 'false'
-        case 'github-token':
-          return '12345'
-        case 'issue-form-template':
-          return 'example-request.yml'
-        case 'issue-number':
-          return '1'
-        case 'parsed-issue-body':
-          return parsedIssue
-        case 'repository':
-          return 'issue-ops/validator'
-        case 'workspace':
-          return process.cwd()
-        default:
-          return ''
-      }
-    })
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
 
-    // First call is to check if the template exists. Set to false to fail fast.
+  it('Retrieves the inputs', async () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(false)
 
     await main.run()
@@ -87,28 +96,7 @@ describe('main', () => {
     expect(core.getInput).toHaveBeenCalledWith('workspace', { required: true })
   })
 
-  it('fails when the issue form template does not exist', async () => {
-    jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
-      switch (name) {
-        case 'add-comment':
-          return 'false'
-        case 'github-token':
-          return '12345'
-        case 'issue-form-template':
-          return 'example-request.yml'
-        case 'issue-number':
-          return '1'
-        case 'parsed-issue-body':
-          return parsedIssue
-        case 'repository':
-          return 'issue-ops/validator'
-        case 'workspace':
-          return process.cwd()
-        default:
-          return ''
-      }
-    })
-
+  it('Fails when the issue form template does not exist', async () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(false)
 
     await main.run()
@@ -118,27 +106,16 @@ describe('main', () => {
     )
   })
 
-  it('does not add a comment when add-comment is false', async () => {
-    jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
-      switch (name) {
-        case 'add-comment':
-          return 'false'
-        case 'github-token':
-          return '12345'
-        case 'issue-form-template':
-          return 'example-request.yml'
-        case 'issue-number':
-          return '1'
-        case 'parsed-issue-body':
-          return parsedIssue
-        case 'repository':
-          return 'issue-ops/validator'
-        case 'workspace':
-          return process.cwd()
-        default:
-          return ''
-      }
-    })
+  it('Does not add a comment when add-comment is false', async () => {
+    core.getInput
+      .mockReset()
+      .mockReturnValueOnce('false') // add-comment
+      .mockReturnValueOnce('1') // issue-number
+      .mockReturnValueOnce(parsedIssue) // parsed-issue-body
+      .mockReturnValueOnce('issue-ops/validator') // repository
+      .mockReturnValueOnce('example-request.yml') // issue-form-template
+      .mockReturnValueOnce('12345') // github-token
+      .mockReturnValueOnce(process.cwd()) // workspace
 
     jest
       .spyOn(fs, 'existsSync')
@@ -163,56 +140,14 @@ describe('main', () => {
       })
 
     // Mock the validation errors.
-    jest
-      .spyOn(validate, 'validate')
-      .mockResolvedValue(['error_one', 'error_two'])
-
-    const mocktokit = {
-      rest: {
-        teams: {
-          getByName: jest.fn().mockImplementation(() => ({
-            data: {
-              id: 1
-            }
-          }))
-        },
-        issues: {
-          createComment: jest.fn().mockImplementation()
-        }
-      }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
+    jest.mocked(validate.validate).mockResolvedValue(['error_one', 'error_two'])
 
     await main.run()
 
     expect(mocktokit.rest.issues.createComment).not.toHaveBeenCalled()
   })
 
-  it('adds a failure comment when add-comment is true', async () => {
-    jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
-      switch (name) {
-        case 'add-comment':
-          return 'true'
-        case 'github-token':
-          return '12345'
-        case 'issue-form-template':
-          return 'example-request.yml'
-        case 'issue-number':
-          return '1'
-        case 'parsed-issue-body':
-          return parsedIssue
-        case 'repository':
-          return 'issue-ops/validator'
-        case 'workspace':
-          return process.cwd()
-        default:
-          return ''
-      }
-    })
-
+  it('Adds a failure comment when add-comment is true', async () => {
     jest
       .spyOn(fs, 'existsSync')
       .mockImplementation((path: PathLike): boolean => {
@@ -239,30 +174,8 @@ describe('main', () => {
         }
       })
 
-    jest
-      .spyOn(validate, 'validate')
-      .mockResolvedValueOnce(['error_one', 'error_two'])
-
-    jest.spyOn(compile, 'compileTemplate')
-
-    const mocktokit = {
-      rest: {
-        teams: {
-          getByName: jest.fn().mockImplementation(() => ({
-            data: {
-              id: 1
-            }
-          }))
-        },
-        issues: {
-          createComment: jest.fn().mockImplementation()
-        }
-      }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
+    // Mock the validation errors.
+    jest.mocked(validate.validate).mockResolvedValue(['error_one', 'error_two'])
 
     await main.run()
 
@@ -275,28 +188,7 @@ describe('main', () => {
     expect(mocktokit.rest.issues.createComment).toHaveBeenCalled()
   })
 
-  it('adds a default failure comment if no template is provided', async () => {
-    jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
-      switch (name) {
-        case 'add-comment':
-          return 'true'
-        case 'github-token':
-          return '12345'
-        case 'issue-form-template':
-          return 'example-request.yml'
-        case 'issue-number':
-          return '1'
-        case 'parsed-issue-body':
-          return parsedIssue
-        case 'repository':
-          return 'issue-ops/validator'
-        case 'workspace':
-          return process.cwd()
-        default:
-          return ''
-      }
-    })
-
+  it('Adds a default failure comment if no template is provided', async () => {
     jest
       .spyOn(fs, 'existsSync')
       .mockImplementation((path: PathLike): boolean => {
@@ -320,30 +212,7 @@ describe('main', () => {
       })
 
     // Mock the validation errors.
-    jest
-      .spyOn(validate, 'validate')
-      .mockResolvedValueOnce(['error_one', 'error_two'])
-
-    jest.spyOn(compile, 'compileTemplate')
-
-    const mocktokit = {
-      rest: {
-        teams: {
-          getByName: jest.fn().mockImplementation(() => ({
-            data: {
-              id: 1
-            }
-          }))
-        },
-        issues: {
-          createComment: jest.fn().mockImplementation()
-        }
-      }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
+    jest.mocked(validate.validate).mockResolvedValue(['error_one', 'error_two'])
 
     await main.run()
 
@@ -351,28 +220,7 @@ describe('main', () => {
     expect(mocktokit.rest.issues.createComment).toHaveBeenCalled()
   })
 
-  it('adds a success comment when add-comment is true', async () => {
-    jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
-      switch (name) {
-        case 'add-comment':
-          return 'true'
-        case 'github-token':
-          return '12345'
-        case 'issue-form-template':
-          return 'example-request.yml'
-        case 'issue-number':
-          return '1'
-        case 'parsed-issue-body':
-          return parsedIssue
-        case 'repository':
-          return 'issue-ops/validator'
-        case 'workspace':
-          return process.cwd()
-        default:
-          return ''
-      }
-    })
-
+  it('Adds a success comment when add-comment is true', async () => {
     jest
       .spyOn(fs, 'existsSync')
       .mockImplementation((path: PathLike): boolean => {
@@ -400,28 +248,7 @@ describe('main', () => {
       })
 
     // Mock the validation errors.
-    jest.spyOn(validate, 'validate').mockResolvedValueOnce([])
-
-    jest.spyOn(compile, 'compileTemplate')
-
-    const mocktokit = {
-      rest: {
-        teams: {
-          getByName: jest.fn().mockImplementation(() => ({
-            data: {
-              id: 1
-            }
-          }))
-        },
-        issues: {
-          createComment: jest.fn().mockImplementation()
-        }
-      }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
+    jest.mocked(validate.validate).mockResolvedValue([])
 
     await main.run()
 
@@ -435,27 +262,6 @@ describe('main', () => {
   })
 
   it('adds a default success comment if no template is provided', async () => {
-    jest.spyOn(core, 'getInput').mockImplementation((name: string) => {
-      switch (name) {
-        case 'add-comment':
-          return 'true'
-        case 'github-token':
-          return '12345'
-        case 'issue-form-template':
-          return 'example-request.yml'
-        case 'issue-number':
-          return '1'
-        case 'parsed-issue-body':
-          return parsedIssue
-        case 'repository':
-          return 'issue-ops/validator'
-        case 'workspace':
-          return process.cwd()
-        default:
-          return ''
-      }
-    })
-
     jest
       .spyOn(fs, 'existsSync')
       .mockImplementation((path: PathLike): boolean => {
@@ -479,28 +285,7 @@ describe('main', () => {
       })
 
     // Mock the validation errors.
-    jest.spyOn(validate, 'validate').mockResolvedValueOnce([])
-
-    jest.spyOn(compile, 'compileTemplate')
-
-    const mocktokit = {
-      rest: {
-        teams: {
-          getByName: jest.fn().mockImplementation(() => ({
-            data: {
-              id: 1
-            }
-          }))
-        },
-        issues: {
-          createComment: jest.fn().mockImplementation()
-        }
-      }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
+    jest.mocked(validate.validate).mockResolvedValue([])
 
     await main.run()
 

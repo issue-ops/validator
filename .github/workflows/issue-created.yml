@@ -7,6 +7,11 @@ on:
       - opened
       - edited
 
+permissions:
+  actions: read
+  contents: read
+  id-token: write
+
 jobs:
   validate:
     name: Parse and Validate Issue
