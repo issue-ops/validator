@@ -5,6 +5,7 @@ import Handlebars from 'handlebars'
 /**
  * A custom Handlebars helper to nicely format newlines in markdown
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 Handlebars.registerHelper('newlines', (input: any): string => {
   if (typeof input !== 'string') return JSON.stringify(input)
   else return input.replaceAll('\n', '<br>')
@@ -21,7 +22,7 @@ export function compileTemplate(template: string, ctx: object): string {
   // Load the template
   const templateFile: string = fs.readFileSync(template, 'utf8')
 
-  // eslint-disable-next-line no-undef
+  // eslint-disable-next-line no-undef, @typescript-eslint/no-explicit-any
   const compiledTemplate: HandlebarsTemplateDelegate<any> =
     Handlebars.compile(templateFile)
 

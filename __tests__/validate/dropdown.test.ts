@@ -1,9 +1,5 @@
-/**
- * Unit tests for the dropdown validator
- */
-
-import { FormattedField } from '../../src/interfaces'
-import * as dropdown from '../../src/validate/dropdown'
+import type { Checkboxes, FormattedField } from '../../src/interfaces.js'
+import * as dropdown from '../../src/validate/dropdown.js'
 
 describe('dropdown', () => {
   let errors: string[] = []
@@ -47,7 +43,7 @@ describe('dropdown', () => {
         required: false
       },
       {
-        test: 123 as any
+        test: 123 as unknown as Checkboxes
       },
       errors
     )

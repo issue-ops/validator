@@ -1,5 +1,5 @@
-import { IssueFormTemplate, FormattedField } from '../interfaces'
-import { formatKey } from './format'
+import { FormattedField, IssueFormTemplate } from '../interfaces.js'
+import { formatKey } from './format.js'
 
 /**
  * Parses the issue form template and returns a dictionary of fields

@@ -3,7 +3,7 @@ import {
   CheckboxesOption,
   FormattedField,
   ParsedBody
-} from '../interfaces'
+} from '../interfaces.js'
 
 /**
  * Validates the parsed issue body section as a checkboxes type
@@ -82,14 +82,21 @@ export function validateCheckboxes(
  * @param obj The object to check
  * @returns True if the object is a Checkboxes object, false otherwise
  */
-function isCheckboxes(obj: any): obj is Checkboxes {
+function isCheckboxes(
+  obj: string | string[] | Checkboxes | null
+): obj is Checkboxes {
   return (
+    obj !== null &&
     typeof obj === 'object' &&
     'selected' in obj &&
     'unselected' in obj &&
     Array.isArray(obj.selected) &&
-    obj.selected.every((item: any) => typeof item === 'string') &&
+    obj.selected.every(
+      (item: string | string[] | Checkboxes | null) => typeof item === 'string'
+    ) &&
     Array.isArray(obj.unselected) &&
-    obj.unselected.every((item: any) => typeof item === 'string')
+    obj.unselected.every(
+      (item: string | string[] | Checkboxes | null) => typeof item === 'string'
+    )
   )
 }

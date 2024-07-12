@@ -1,9 +1,5 @@
-/**
- * Unit tests for the checkboxes validator
- */
-
-import { FormattedField } from '../../src/interfaces'
-import * as checkboxes from '../../src/validate/checkboxes'
+import type { Checkboxes, FormattedField } from '../../src/interfaces.js'
+import * as checkboxes from '../../src/validate/checkboxes.js'
 
 describe('checkboxes', () => {
   let errors: string[] = []
@@ -47,7 +43,7 @@ describe('checkboxes', () => {
         required: false
       },
       {
-        test: 123 as any
+        test: 123 as unknown as Checkboxes
       },
       errors
     )

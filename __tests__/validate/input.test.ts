@@ -1,8 +1,5 @@
-/**
- * Unit tests for the input validator
- */
-
-import * as input from '../../src/validate/input'
+import type { Checkboxes } from '../../src/interfaces.js'
+import * as input from '../../src/validate/input.js'
 
 describe('input', () => {
   let errors: string[] = []
@@ -49,7 +46,7 @@ describe('input', () => {
         required: false
       },
       {
-        test: 123 as any
+        test: 123 as unknown as Checkboxes
       },
       errors
     )

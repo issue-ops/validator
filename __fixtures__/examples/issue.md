@@ -38,8 +38,7 @@ It's pretty cool!
 
 ### The Code of the Thing
 
-const thing = new Thing()
-thing.doThing()
+const thing = new Thing() thing.doThing()
 
 ### The String Method of the Code of the Thing
 

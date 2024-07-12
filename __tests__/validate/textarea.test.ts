@@ -1,8 +1,5 @@
-/**
- * Unit tests for the textarea validator
- */
-
-import * as textarea from '../../src/validate/textarea'
+import type { Checkboxes } from '../../src/interfaces.js'
+import * as textarea from '../../src/validate/textarea.js'
 
 describe('textarea', () => {
   let errors: string[] = []
@@ -49,7 +46,7 @@ describe('textarea', () => {
         required: false
       },
       {
-        test: 123 as any
+        test: 123 as unknown as Checkboxes
       },
       errors
     )

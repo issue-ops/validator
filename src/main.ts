@@ -1,11 +1,11 @@
-import fs from 'fs'
-import YAML from 'yaml'
 import * as core from '@actions/core'
 import { Octokit } from '@octokit/rest'
-import { compileTemplate } from './utils/compile'
-import { parseTemplate } from './utils/parse'
-import { FormattedField, ParsedBody } from './interfaces'
-import { validate } from './validate'
+import fs from 'fs'
+import YAML from 'yaml'
+import { FormattedField, ParsedBody } from './interfaces.js'
+import { compileTemplate } from './utils/compile.js'
+import { parseTemplate } from './utils/parse.js'
+import { validate } from './validate.js'
 
 /**
  * The entrypoint for the action

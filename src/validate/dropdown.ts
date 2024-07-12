@@ -1,4 +1,5 @@
-import { FormattedField, ParsedBody } from '../interfaces'
+import type { Checkboxes } from '../interfaces.js'
+import { FormattedField, ParsedBody } from '../interfaces.js'
 
 /**
  * Validates the parsed issue body section as a dropdown type
@@ -57,6 +58,8 @@ export function validateDropdown(
   }
 }
 
-function isStringList(obj: any): obj is string[] {
+function isStringList(
+  obj: string | string[] | Checkboxes | null
+): obj is string[] {
   return Array.isArray(obj) && obj.every((item) => typeof item === 'string')
 }
