@@ -10,13 +10,13 @@
   "the_code_of_the_thing": "const thing = new Thing()\nthing.doThing()",
   "the_string_method_of_the_code_of_the_thing": "thing.toString()",
   "is_the_thing_a_thing": {
-    "selected": ["Yes", "No"],
-    "unselected": []
+    "selected": ["Yes"],
+    "unselected": ["No"]
   },
   "is_the_thing_useful": {
     "selected": ["Sometimes"],
     "unselected": ["Yes", "No"]
   },
   "read_team": "IssueOps-Demo-Readers",
-  "write_team": "IssueOps-Demo-Writers-NotATeam"
+  "write_team": "IssueOps-Demo-Writers"
 }

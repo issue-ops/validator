@@ -1,5 +1,5 @@
 validators:
-  - field: read_team
+  - field: read-team
     script: team
-  - field: write_team
+  - field: write-team
     script: team

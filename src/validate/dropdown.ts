@@ -48,7 +48,7 @@ export function validateDropdown(
       errors.push(`Too many dropdown selections: ${key}`)
 
     // Get the allowed options from the properties
-    const allowedOptions: string[] = (props.dropdownOptions ?? []) as string[]
+    const allowedOptions: string[] = (props.options ?? []) as string[]
 
     // Selected options are not in the list of options
     for (const option of values) {

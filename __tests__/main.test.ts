@@ -4,6 +4,10 @@ import fs, { PathLike, PathOrFileDescriptor } from 'fs'
 import * as core from '../__fixtures__/core.js'
 import * as octokit from '../__fixtures__/octokit.js'
 
+const compileTemplateSpy = jest.fn()
+const validateSpy = jest.fn()
+const parseTemplateSpy = jest.fn()
+
 jest.unstable_mockModule('@actions/core', () => core)
 jest.unstable_mockModule('@octokit/rest', async () => {
   class Octokit {
@@ -17,34 +21,39 @@ jest.unstable_mockModule('@octokit/rest', async () => {
   }
 })
 jest.unstable_mockModule('../src/utils/compile.js', () => ({
-  compileTemplate: jest.fn()
+  compileTemplate: compileTemplateSpy
 }))
 jest.unstable_mockModule('../src/validate.js', () => ({
-  validate: jest.fn()
+  validate: validateSpy
+}))
+jest.unstable_mockModule('../src/utils/parse.js', () => ({
+  parseTemplate: parseTemplateSpy
 }))
 
 const main = await import('../src/main.js')
-const compile = await import('../src/utils/compile.js')
-const validate = await import('../src/validate.js')
 const { Octokit } = await import('@octokit/rest')
 
 const mocktokit = jest.mocked(new Octokit())
 
 // Get the expected data (before mocking fs)
 const parsedIssue: string = fs.readFileSync(
-  '__fixtures__/examples/parsed-issue.json',
+  '__fixtures__/example/parsed-issue.json',
   'utf-8'
 )
 const template: string = fs.readFileSync(
-  '__fixtures__/examples/template.yml',
+  '__fixtures__/example/template.yml',
+  'utf-8'
+)
+const parsedTemplate: string = fs.readFileSync(
+  '__fixtures__/example/parsed-template.json',
   'utf-8'
 )
 const failureMustache: string = fs.readFileSync(
-  '__fixtures__/examples/failure.mustache',
+  '__fixtures__/example/failure.mustache',
   'utf-8'
 )
 const successMustache: string = fs.readFileSync(
-  '__fixtures__/examples/success.mustache',
+  '__fixtures__/example/success.mustache',
   'utf-8'
 )
 
@@ -64,6 +73,9 @@ describe('main.ts', () => {
       .mockReturnValueOnce('example-request.yml') // issue-form-template
       .mockReturnValueOnce('12345') // github-token
       .mockReturnValueOnce(process.cwd()) // workspace
+
+    parseTemplateSpy.mockReturnValue(JSON.parse(parsedTemplate))
+    validateSpy.mockReturnValue([])
   })
 
   afterEach(() => {
@@ -71,8 +83,6 @@ describe('main.ts', () => {
   })
 
   it('Retrieves the inputs', async () => {
-    jest.spyOn(fs, 'existsSync').mockReturnValue(false)
-
     await main.run()
 
     expect(core.getInput).toHaveBeenCalledWith('add-comment', {
@@ -94,16 +104,6 @@ describe('main.ts', () => {
       required: true
     })
     expect(core.getInput).toHaveBeenCalledWith('workspace', { required: true })
-  })
-
-  it('Fails when the issue form template does not exist', async () => {
-    jest.spyOn(fs, 'existsSync').mockReturnValue(false)
-
-    await main.run()
-
-    expect(core.setFailed).toHaveBeenCalledWith(
-      'Template not found: example-request.yml'
-    )
   })
 
   it('Does not add a comment when add-comment is false', async () => {
@@ -140,7 +140,7 @@ describe('main.ts', () => {
       })
 
     // Mock the validation errors.
-    jest.mocked(validate.validate).mockResolvedValue(['error_one', 'error_two'])
+    jest.mocked(validateSpy).mockReturnValue(['error_one', 'error_two'])
 
     await main.run()
 
@@ -175,11 +175,11 @@ describe('main.ts', () => {
       })
 
     // Mock the validation errors.
-    jest.mocked(validate.validate).mockResolvedValue(['error_one', 'error_two'])
+    jest.mocked(validateSpy).mockReturnValue(['error_one', 'error_two'])
 
     await main.run()
 
-    expect(compile.compileTemplate).toHaveBeenCalledWith(
+    expect(compileTemplateSpy).toHaveBeenCalledWith(
       `${process.cwd()}/.github/validator/failure.mustache`,
       {
         errors: ['error_one', 'error_two']
@@ -212,11 +212,11 @@ describe('main.ts', () => {
       })
 
     // Mock the validation errors.
-    jest.mocked(validate.validate).mockResolvedValue(['error_one', 'error_two'])
+    jest.mocked(validateSpy).mockReturnValue(['error_one', 'error_two'])
 
     await main.run()
 
-    expect(compile.compileTemplate).not.toHaveBeenCalledWith()
+    expect(compileTemplateSpy).not.toHaveBeenCalledWith()
     expect(mocktokit.rest.issues.createComment).toHaveBeenCalled()
   })
 
@@ -248,11 +248,11 @@ describe('main.ts', () => {
       })
 
     // Mock the validation errors.
-    jest.mocked(validate.validate).mockResolvedValue([])
+    jest.mocked(validateSpy).mockReturnValue([])
 
     await main.run()
 
-    expect(compile.compileTemplate).toHaveBeenCalledWith(
+    expect(compileTemplateSpy).toHaveBeenCalledWith(
       `${process.cwd()}/.github/validator/success.mustache`,
       {
         issue: JSON.parse(parsedIssue)
@@ -285,11 +285,11 @@ describe('main.ts', () => {
       })
 
     // Mock the validation errors.
-    jest.mocked(validate.validate).mockResolvedValue([])
+    jest.mocked(validateSpy).mockReturnValue([])
 
     await main.run()
 
-    expect(compile.compileTemplate).not.toHaveBeenCalledWith()
+    expect(compileTemplateSpy).not.toHaveBeenCalledWith()
     expect(mocktokit.rest.issues.createComment).toHaveBeenCalled()
   })
 })

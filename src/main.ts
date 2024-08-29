@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import { Octokit } from '@octokit/rest'
 import fs from 'fs'
-import YAML from 'yaml'
 import { FormattedField, ParsedBody } from './interfaces.js'
 import { compileTemplate } from './utils/compile.js'
 import { parseTemplate } from './utils/parse.js'
@@ -45,18 +44,9 @@ export async function run(): Promise<void> {
   core.info(`  template: ${template}`)
   core.info(`  workspace: ${workspace}`)
 
-  // Verify the template exists
-  if (!fs.existsSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`)) {
-    core.setFailed(`Template not found: ${template}`)
-    return
-  }
-  core.info(`Template found: ${template}`)
-
   // Read and parse the template
   const parsedTemplate: { [key: string]: FormattedField } = await parseTemplate(
-    YAML.parse(
-      fs.readFileSync(`${workspace}/.github/ISSUE_TEMPLATE/${template}`, 'utf8')
-    )
+    `${workspace}/.github/ISSUE_TEMPLATE/${template}`
   )
   core.info(`Template parsed: ${JSON.stringify(parsedTemplate)}`)
 

@@ -5,6 +5,11 @@ import * as core from '../__fixtures__/core.js'
 import * as github from '../__fixtures__/github.js'
 import * as octokit from '../__fixtures__/octokit.js'
 
+const validateCheckboxesSpy = jest.fn()
+const validateDropdownSpy = jest.fn()
+const validateInputSpy = jest.fn()
+const validateTextareaSpy = jest.fn()
+
 jest.unstable_mockModule('@actions/core', () => core)
 jest.unstable_mockModule('@actions/github', () => github)
 jest.unstable_mockModule('@octokit/rest', async () => {
@@ -19,28 +24,24 @@ jest.unstable_mockModule('@octokit/rest', async () => {
   }
 })
 jest.unstable_mockModule('../src/validate/checkboxes.js', () => ({
-  validateCheckboxes: jest.fn()
+  validateCheckboxes: validateCheckboxesSpy
 }))
 jest.unstable_mockModule('../src/validate/dropdown.js', () => ({
-  validateDropdown: jest.fn()
+  validateDropdown: validateDropdownSpy
 }))
 jest.unstable_mockModule('../src/validate/input.js', () => ({
-  validateInput: jest.fn()
+  validateInput: validateInputSpy
 }))
 jest.unstable_mockModule('../src/validate/textarea.js', () => ({
-  validateTextarea: jest.fn()
+  validateTextarea: validateTextareaSpy
 }))
 
-const checkboxes = await import('../src/validate/checkboxes.js')
-const dropdown = await import('../src/validate/dropdown.js')
-const input = await import('../src/validate/input.js')
-const textarea = await import('../src/validate/textarea.js')
 const { validate } = await import('../src/validate.js')
 const { Octokit } = await import('@octokit/rest')
 
 const mocktokit = jest.mocked(new Octokit())
 
-describe('validate.ts', () => {
+describe('validate()', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
@@ -51,22 +52,26 @@ describe('validate.ts', () => {
     await validate(
       {
         test_input: {
+          label: 'test',
           type: 'input',
           required: true
         },
         test_textarea: {
+          label: 'test',
           type: 'textarea',
           required: true
         },
         test_dropdown: {
+          label: 'test',
           type: 'dropdown',
           required: true,
-          dropdownOptions: ['test']
+          options: ['test']
         },
         test_checkboxes: {
+          label: 'test',
           type: 'checkboxes',
           required: true,
-          checkboxesOptions: [
+          options: [
             {
               label: 'test',
               required: true
@@ -80,18 +85,19 @@ describe('validate.ts', () => {
       process.cwd()
     )
 
-    expect(input.validateInput).toHaveBeenCalled()
-    expect(textarea.validateTextarea).toHaveBeenCalled()
-    expect(dropdown.validateDropdown).toHaveBeenCalled()
-    expect(checkboxes.validateCheckboxes).toHaveBeenCalled()
+    expect(validateInputSpy).toHaveBeenCalled()
+    expect(validateTextareaSpy).toHaveBeenCalled()
+    expect(validateDropdownSpy).toHaveBeenCalled()
+    expect(validateCheckboxesSpy).toHaveBeenCalled()
   })
 
   it('Skips custom validation if no config is present', async () => {
-    jest.spyOn(fs, 'existsSync').mockReturnValue(false)
+    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(false)
 
     const errors: string[] = await validate(
       {
         test: {
+          label: 'test',
           type: 'input',
           required: true
         }
@@ -103,10 +109,13 @@ describe('validate.ts', () => {
     )
 
     expect(errors).toEqual([])
+
+    existsSyncSpy.mockRestore()
   })
 
   it('Passes custom validation if config is present and inputs are valid', async () => {
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true)
+    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true)
+
     core.getInput.mockReturnValue('1234')
 
     mocktokit.rest.teams.getByName.mockResolvedValue({
@@ -117,27 +126,32 @@ describe('validate.ts', () => {
 
     const errors: string[] = await validate(
       {
-        read_team: {
+        'read-team': {
+          label: 'test',
           type: 'input',
           required: true
         },
-        write_team: {
+        'write-team': {
+          label: 'test',
           type: 'input',
           required: true
         }
       },
       {
-        read_team: 'IssueOps-Demo-Readers',
-        write_team: 'IssueOps-Demo-Writers'
+        'read-team': 'IssueOps-Demo-Readers',
+        'write-team': 'IssueOps-Demo-Writers'
       },
       process.cwd()
     )
 
     expect(errors).toEqual([])
+
+    existsSyncSpy.mockRestore()
   })
 
   it('Fails custom validation if config is present and inputs are invalid', async () => {
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true)
+    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true)
+
     core.getInput.mockReturnValue('1234')
 
     mocktokit.rest.teams.getByName.mockRejectedValue({
@@ -146,25 +160,29 @@ describe('validate.ts', () => {
 
     const errors: string[] = await validate(
       {
-        read_team: {
+        'read-team': {
+          label: 'test',
           type: 'input',
           required: true
         },
-        write_team: {
+        'write-team': {
+          label: 'test',
           type: 'input',
           required: true
         }
       },
       {
-        read_team: 'IssueOps-Demo-Readers',
-        write_team: 'IssueOps-Demo-Writers'
+        'read-team': 'IssueOps-Demo-Readers',
+        'write-team': 'IssueOps-Demo-Writers'
       },
       process.cwd()
     )
 
     expect(errors).toEqual([
-      "Invalid read_team: Team 'IssueOps-Demo-Readers' does not exist",
-      "Invalid write_team: Team 'IssueOps-Demo-Writers' does not exist"
+      "Invalid read-team: Team 'IssueOps-Demo-Readers' does not exist",
+      "Invalid write-team: Team 'IssueOps-Demo-Writers' does not exist"
     ])
+
+    existsSyncSpy.mockRestore()
   })
 })
