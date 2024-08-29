@@ -126,20 +126,20 @@ describe('validate()', () => {
 
     const errors: string[] = await validate(
       {
-        read_team: {
+        'read-team': {
           label: 'test',
           type: 'input',
           required: true
         },
-        write_team: {
+        'write-team': {
           label: 'test',
           type: 'input',
           required: true
         }
       },
       {
-        read_team: 'IssueOps-Demo-Readers',
-        write_team: 'IssueOps-Demo-Writers'
+        'read-team': 'IssueOps-Demo-Readers',
+        'write-team': 'IssueOps-Demo-Writers'
       },
       process.cwd()
     )
@@ -160,27 +160,27 @@ describe('validate()', () => {
 
     const errors: string[] = await validate(
       {
-        read_team: {
+        'read-team': {
           label: 'test',
           type: 'input',
           required: true
         },
-        write_team: {
+        'write-team': {
           label: 'test',
           type: 'input',
           required: true
         }
       },
       {
-        read_team: 'IssueOps-Demo-Readers',
-        write_team: 'IssueOps-Demo-Writers'
+        'read-team': 'IssueOps-Demo-Readers',
+        'write-team': 'IssueOps-Demo-Writers'
       },
       process.cwd()
     )
 
     expect(errors).toEqual([
-      "Invalid read_team: Team 'IssueOps-Demo-Readers' does not exist",
-      "Invalid write_team: Team 'IssueOps-Demo-Writers' does not exist"
+      "Invalid read-team: Team 'IssueOps-Demo-Readers' does not exist",
+      "Invalid write-team: Team 'IssueOps-Demo-Writers' does not exist"
     ])
 
     existsSyncSpy.mockRestore()
