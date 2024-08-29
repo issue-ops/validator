@@ -1,31 +1,36 @@
+import { jest } from '@jest/globals'
 import { formatKey } from '../../src/utils/format.js'
 
-describe('formatKey', () => {
-  it('removes non-alphanumeric characters', async () => {
+describe('formatKey()', () => {
+  beforeEach(async () => {
+    jest.resetAllMocks()
+  })
+
+  it('Removes non-alphanumeric characters', async () => {
     expect(formatKey('!@#$%^&*()_+')).toBe('')
   })
 
-  it('converts to lowercase', async () => {
+  it('Converts to lowercase', async () => {
     expect(formatKey('ABC')).toBe('abc')
   })
 
-  it('replaces spaces with underscores', async () => {
+  it('Replaces spaces with underscores', async () => {
     expect(formatKey('a b c')).toBe('a_b_c')
   })
 
-  it('replaces multiple consecutive underscores with a single underscore', async () => {
+  it('Replaces multiple consecutive underscores with a single underscore', async () => {
     expect(formatKey('a__b__c')).toBe('a_b_c')
   })
 
-  it('removes leading and trailing underscores', async () => {
+  it('Removes leading and trailing underscores', async () => {
     expect(formatKey('_abc_')).toBe('abc')
   })
 
-  it('removes leading and trailing whitespace', async () => {
+  it('Removes leading and trailing whitespace', async () => {
     expect(formatKey(' abc ')).toBe('abc')
   })
 
-  it('handles empty strings', async () => {
+  it('Handles empty strings', async () => {
     expect(formatKey('')).toBe('')
   })
 })

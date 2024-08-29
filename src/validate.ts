@@ -23,18 +23,16 @@ export async function validate(
   const errors: string[] = []
 
   core.info('Starting standard validation')
-  for (const [key, props] of Object.entries(template)) {
-    // Type-specific validations
-    if (props.type === 'input') {
-      validateInput(key, props, issue, errors)
-    } else if (props.type === 'textarea') {
+
+  // Type-specific validations
+  for (const [key, props] of Object.entries(template))
+    if (props.type === 'input') validateInput(key, props, issue, errors)
+    else if (props.type === 'textarea')
       validateTextarea(key, props, issue, errors)
-    } else if (props.type === 'dropdown') {
+    else if (props.type === 'dropdown')
       validateDropdown(key, props, issue, errors)
-    } else if (props.type === 'checkboxes') {
+    else if (props.type === 'checkboxes')
       validateCheckboxes(key, props, issue, errors)
-    }
-  }
 
   // If there is no config file, return the normal validation errors
   if (!fs.existsSync(`${workspace}/.github/validator/config.yml`)) {

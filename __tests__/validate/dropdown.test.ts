@@ -1,15 +1,15 @@
 import type { Checkboxes, FormattedField } from '../../src/interfaces.js'
-import * as dropdown from '../../src/validate/dropdown.js'
+import { validateDropdown } from '../../src/validate/dropdown.js'
 
-describe('dropdown', () => {
+describe('validateDropdown()', () => {
   let errors: string[] = []
 
   beforeEach(() => {
     errors = []
   })
 
-  it('default required to false if not provided', async () => {
-    dropdown.validateDropdown(
+  it('Default required to false if not provided', async () => {
+    validateDropdown(
       'test',
       {
         type: 'dropdown'
@@ -21,10 +21,11 @@ describe('dropdown', () => {
     expect(errors).toHaveLength(0)
   })
 
-  it('returns an error for missing required input', async () => {
-    dropdown.validateDropdown(
+  it('Returns an error for missing required input', async () => {
+    validateDropdown(
       'test',
       {
+        label: 'test',
         type: 'dropdown',
         required: true
       },
@@ -35,10 +36,11 @@ describe('dropdown', () => {
     expect(errors).toContain('Missing required input: test')
   })
 
-  it('returns an error for non-list input', async () => {
-    dropdown.validateDropdown(
+  it('Returns an error for non-list input', async () => {
+    validateDropdown(
       'test',
       {
+        label: 'test',
         type: 'dropdown',
         required: false
       },
@@ -51,10 +53,11 @@ describe('dropdown', () => {
     expect(errors).toContain('Dropdown input is not a list: test')
   })
 
-  it('returns an error for required input with empty list', async () => {
-    dropdown.validateDropdown(
+  it('Returns an error for required input with empty list', async () => {
+    validateDropdown(
       'test',
       {
+        label: 'test',
         type: 'dropdown',
         required: true
       },
@@ -67,10 +70,11 @@ describe('dropdown', () => {
     expect(errors).toContain('Missing required input: test')
   })
 
-  it('returns an error for multiple selections with multi-select disabled', async () => {
-    dropdown.validateDropdown(
+  it('Returns an error for multiple selections with multi-select disabled', async () => {
+    validateDropdown(
       'test',
       {
+        label: 'test',
         type: 'dropdown',
         required: false,
         multiple: false
@@ -84,13 +88,14 @@ describe('dropdown', () => {
     expect(errors).toContain('Too many dropdown selections: test')
   })
 
-  it('returns an error for non-allowed options', async () => {
-    dropdown.validateDropdown(
+  it('Returns an error for non-allowed options', async () => {
+    validateDropdown(
       'test',
       {
+        label: 'test',
         type: 'dropdown',
         required: false,
-        dropdownOptions: ['test']
+        options: ['test']
       },
       {
         test: ['test', 'test2']
@@ -101,13 +106,14 @@ describe('dropdown', () => {
     expect(errors).toContain('Invalid dropdown selection: test / test2')
   })
 
-  it('does not return an error for valid input', async () => {
-    dropdown.validateDropdown(
+  it('Does not return an error for valid input', async () => {
+    validateDropdown(
       'test',
       {
+        label: 'test',
         type: 'dropdown',
         required: false,
-        dropdownOptions: ['test']
+        options: ['test']
       },
       {
         test: ['test']

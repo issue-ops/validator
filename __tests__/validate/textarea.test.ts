@@ -1,17 +1,18 @@
 import type { Checkboxes } from '../../src/interfaces.js'
-import * as textarea from '../../src/validate/textarea.js'
+import { validateTextarea } from '../../src/validate/textarea.js'
 
-describe('textarea', () => {
+describe('validateTextarea()', () => {
   let errors: string[] = []
 
   beforeEach(() => {
     errors = []
   })
 
-  it('returns an error for missing required input', async () => {
-    textarea.validateTextarea(
+  it('Returns an error for missing required input', async () => {
+    validateTextarea(
       'test',
       {
+        label: 'test',
         type: 'textarea',
         required: true
       },
@@ -22,10 +23,11 @@ describe('textarea', () => {
     expect(errors).toContain('Missing required input: test')
   })
 
-  it('returns an error for empty required input', async () => {
-    textarea.validateTextarea(
+  it('Returns an error for empty required input', async () => {
+    validateTextarea(
       'test',
       {
+        label: 'test',
         type: 'textarea',
         required: true
       },
@@ -38,10 +40,11 @@ describe('textarea', () => {
     expect(errors).toContain('Empty required input: test')
   })
 
-  it('returns an error for non-string input', async () => {
-    textarea.validateTextarea(
+  it('Returns an error for non-string input', async () => {
+    validateTextarea(
       'test',
       {
+        label: 'test',
         type: 'textarea',
         required: false
       },
@@ -54,10 +57,11 @@ describe('textarea', () => {
     expect(errors).toContain('Textarea response is not a string: test')
   })
 
-  it('does not return an error for valid input', async () => {
-    textarea.validateTextarea(
+  it('Does not return an error for valid input', async () => {
+    validateTextarea(
       'test',
       {
+        label: 'test',
         type: 'textarea',
         required: false
       },

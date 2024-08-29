@@ -1,4 +1,11 @@
-import { FormattedField, IssueFormTemplate } from '../interfaces.js'
+import fs from 'fs'
+import yaml from 'yaml'
+import {
+  CheckboxesField,
+  DropdownField,
+  FormattedField,
+  InputField
+} from '../interfaces.js'
 import { formatKey } from './format.js'
 
 /**
@@ -7,34 +14,44 @@ import { formatKey } from './format.js'
  * @returns A dictionary of fields
  */
 export async function parseTemplate(
-  template: IssueFormTemplate
+  templatePath: string
 ): Promise<{ [key: string]: FormattedField }> {
   const fields: { [key: string]: FormattedField } = {}
+
+  // Verify the template exists
+  if (!fs.existsSync(templatePath))
+    throw new Error(`Template not found: ${templatePath}`)
+
+  const template = yaml.parse(fs.readFileSync(templatePath, 'utf8'))
 
   for (const item of template.body) {
     // Skip markdown fields
     if (item.type === 'markdown') continue
 
-    // Convert the label to snake case. This is the heading in the issue body
-    // when the form is submitted, and is used by issue-ops/parser as the key.
-    const formattedKey: string = formatKey(item.attributes.label)
+    // Check if the ID is present in the field attributes. If so, use it as the
+    // key. Otherwise, convert the label to snake case (this is the heading in
+    // the issue body when the form is submitted).
+    const key: string =
+      item.id || formatKey((item as InputField).attributes.label)
 
     // Take the rest of the attributes and add them to the fields object
-    fields[formattedKey] = {
+    fields[key] = {
       type: item.type,
-      required: item.validations?.required || false
+      label: (item as InputField).attributes.label,
+      required: (item as InputField).validations?.required || false
     }
 
     if (item.type === 'dropdown') {
       // These fields are only used by dropdowns
-      fields[formattedKey].multiple = item.attributes.multiple || false
-      fields[formattedKey].dropdownOptions = item.attributes.options
+      fields[key].multiple =
+        (item as DropdownField).attributes.multiple || false
+      fields[key].options = (item as DropdownField).attributes.options
     }
 
     if (item.type === 'checkboxes') {
       // Checkboxes have a different options format than dropdowns
       // Enforce false for required if not present
-      fields[formattedKey].checkboxesOptions = item.attributes.options.map(
+      fields[key].options = (item as CheckboxesField).attributes.options.map(
         (x) => {
           return { label: x.label, required: x.required || false }
         }

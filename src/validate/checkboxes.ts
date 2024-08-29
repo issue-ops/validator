@@ -1,9 +1,4 @@
-import {
-  Checkboxes,
-  CheckboxesOption,
-  FormattedField,
-  ParsedBody
-} from '../interfaces.js'
+import { Checkboxes, FormattedField, ParsedBody } from '../interfaces.js'
 
 /**
  * Validates the parsed issue body section as a checkboxes type
@@ -42,19 +37,30 @@ export function validateCheckboxes(
 
     // Get the allowed options from the properties
     const allowedOptions: string[] =
-      props.checkboxesOptions === undefined
+      props.options === undefined
         ? []
-        : props.checkboxesOptions.map(
-            (option: CheckboxesOption) => option.label
-          )
+        : (
+            props.options as {
+              label: string
+              required: boolean
+            }[]
+          ).map((option: { label: string; required: boolean }) => option.label)
 
     // Get the required options from the properties
     const requiredOptions: string[] =
-      props.checkboxesOptions === undefined
+      props.options === undefined
         ? []
-        : props.checkboxesOptions
-            .filter((option: CheckboxesOption) => option.required === true)
-            .map((option: CheckboxesOption) => option.label)
+        : (
+            props.options as {
+              label: string
+              required: boolean
+            }[]
+          )
+            .filter(
+              (option: { label: string; required: boolean }) =>
+                option.required === true
+            )
+            .map((option: { label: string; required: boolean }) => option.label)
 
     // Required checkboxes must have at least one option selected
     if (required && checkboxes.selected.length === 0)

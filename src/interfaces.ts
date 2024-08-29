@@ -89,7 +89,10 @@ export interface CheckboxesField {
   attributes: {
     label: string
     description?: string
-    options: CheckboxesOption[]
+    options: {
+      label: string
+      required?: boolean
+    }[]
   }
   validations?: {
     required?: boolean
@@ -100,21 +103,28 @@ export interface CheckboxesField {
  * A formatted GitHub issue forms field
  */
 export interface FormattedField {
+  id?: string
+  label: string
   type: 'markdown' | 'textarea' | 'input' | 'dropdown' | 'checkboxes'
   required: boolean
   multiple?: boolean
-  dropdownOptions?: string[]
-  checkboxesOptions?: CheckboxesOption[]
+  options?: (
+    | string
+    | {
+        label: string
+        required: boolean
+      }
+  )[]
 }
 
 /**
  * A parsed issue body
  *
  * Each key can be a string. Each value can be a string, list of strings,
- * object, or null.
+ * or checkboxes.
  */
 export interface ParsedBody {
-  [key: string]: string | string[] | Checkboxes | null
+  [key: string]: string | string[] | Checkboxes
 }
 
 /**
@@ -123,12 +133,4 @@ export interface ParsedBody {
 export interface Checkboxes {
   selected: string[]
   unselected: string[]
-}
-
-/**
- * A checkbox option
- */
-export interface CheckboxesOption {
-  label: string
-  required: boolean
 }

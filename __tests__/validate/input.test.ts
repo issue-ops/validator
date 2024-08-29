@@ -1,17 +1,18 @@
 import type { Checkboxes } from '../../src/interfaces.js'
-import * as input from '../../src/validate/input.js'
+import { validateInput } from '../../src/validate/input.js'
 
-describe('input', () => {
+describe('validateInput()', () => {
   let errors: string[] = []
 
   beforeEach(() => {
     errors = []
   })
 
-  it('returns an error for missing required input', async () => {
-    input.validateInput(
+  it('Returns an error for missing required input', async () => {
+    validateInput(
       'test',
       {
+        label: 'test',
         type: 'input',
         required: true
       },
@@ -22,10 +23,11 @@ describe('input', () => {
     expect(errors).toContain('Missing required input: test')
   })
 
-  it('returns an error for empty required input', async () => {
-    input.validateInput(
+  it('Returns an error for empty required input', async () => {
+    validateInput(
       'test',
       {
+        label: 'test',
         type: 'input',
         required: true
       },
@@ -38,10 +40,11 @@ describe('input', () => {
     expect(errors).toContain('Empty required input: test')
   })
 
-  it('returns an error for non-string input', async () => {
-    input.validateInput(
+  it('Returns an error for non-string input', async () => {
+    validateInput(
       'test',
       {
+        label: 'test',
         type: 'input',
         required: false
       },
@@ -54,10 +57,11 @@ describe('input', () => {
     expect(errors).toContain('Input response is not a string: test')
   })
 
-  it('does not return an error for valid input', async () => {
-    input.validateInput(
+  it('Does not return an error for valid input', async () => {
+    validateInput(
       'test',
       {
+        label: 'test',
         type: 'input',
         required: false
       },

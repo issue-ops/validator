@@ -1,15 +1,15 @@
 import type { Checkboxes, FormattedField } from '../../src/interfaces.js'
-import * as checkboxes from '../../src/validate/checkboxes.js'
+import { validateCheckboxes } from '../../src/validate/checkboxes.js'
 
-describe('checkboxes', () => {
+describe('validateCheckboxes()', () => {
   let errors: string[] = []
 
   beforeEach(() => {
     errors = []
   })
 
-  it('default required to false if not provided', async () => {
-    checkboxes.validateCheckboxes(
+  it('Default required to false if not provided', async () => {
+    validateCheckboxes(
       'test',
       {
         type: 'checkboxes'
@@ -21,10 +21,11 @@ describe('checkboxes', () => {
     expect(errors).toHaveLength(0)
   })
 
-  it('returns an error for missing required input', async () => {
-    checkboxes.validateCheckboxes(
+  it('Returns an error for missing required input', async () => {
+    validateCheckboxes(
       'test',
       {
+        label: 'test',
         type: 'checkboxes',
         required: true
       },
@@ -35,10 +36,11 @@ describe('checkboxes', () => {
     expect(errors).toContain('Missing required input: test')
   })
 
-  it('returns an error for non-checkboxes input', async () => {
-    checkboxes.validateCheckboxes(
+  it('Returns an error for non-checkboxes input', async () => {
+    validateCheckboxes(
       'test',
       {
+        label: 'test',
         type: 'checkboxes',
         required: false
       },
@@ -53,10 +55,11 @@ describe('checkboxes', () => {
     )
   })
 
-  it('returns an error for required input with no selected options', async () => {
-    checkboxes.validateCheckboxes(
+  it('Returns an error for required input with no selected options', async () => {
+    validateCheckboxes(
       'test',
       {
+        label: 'test',
         type: 'checkboxes',
         required: true
       },
@@ -72,10 +75,11 @@ describe('checkboxes', () => {
     expect(errors).toContain('At least one checkbox must be selected: test')
   })
 
-  it('returns an error for invalid selected options', async () => {
-    checkboxes.validateCheckboxes(
+  it('Returns an error for invalid selected options', async () => {
+    validateCheckboxes(
       'test',
       {
+        label: 'test',
         type: 'checkboxes',
         required: false
       },
@@ -91,10 +95,11 @@ describe('checkboxes', () => {
     expect(errors).toContain('Invalid checkboxes selection: test / test')
   })
 
-  it('returns an error for invalid unselected options', async () => {
-    checkboxes.validateCheckboxes(
+  it('Returns an error for invalid unselected options', async () => {
+    validateCheckboxes(
       'test',
       {
+        label: 'test',
         type: 'checkboxes',
         required: false
       },
@@ -110,13 +115,14 @@ describe('checkboxes', () => {
     expect(errors).toContain('Invalid checkboxes selection: test / test')
   })
 
-  it('returns an error for missing required options', async () => {
-    checkboxes.validateCheckboxes(
+  it('Returns an error for missing required options', async () => {
+    validateCheckboxes(
       'test',
       {
+        label: 'test',
         type: 'checkboxes',
         required: false,
-        checkboxesOptions: [
+        options: [
           {
             label: 'test',
             required: true
