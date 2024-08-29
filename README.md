@@ -203,15 +203,16 @@ The content of the file should follow the below format:
 
 ```yaml
 validators:
-  - field: read_team
+  - field: read-team
     script: team
-  - field: write_team
+  - field: write-team
     script: team
 ```
 
 | Property | Description                                                     |
 | -------- | --------------------------------------------------------------- |
-| `field`  | The `label` attribute of the input in the issue form template   |
+| `field`  | The `id` attribute of the input in the issue form template      |
+|          | If `id` is not provided, the `label` attribute will be used     |
 |          | Must be camel-cased, and all special characters removed         |
 |          | This matches the output format of the `issue-ops/parser` action |
 |          | E.g. `My Input Name :D` -> `my_input_name`                      |
