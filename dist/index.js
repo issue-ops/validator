@@ -29073,7 +29073,7 @@ function legacyRestEndpointMethods(octokit) {
 }
 legacyRestEndpointMethods.VERSION = VERSION$2;
 
-const VERSION$1 = "21.0.1";
+const VERSION$1 = "21.0.2";
 
 const Octokit = Octokit$1.plugin(requestLog, legacyRestEndpointMethods, paginateRest).defaults(
   {
