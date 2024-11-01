@@ -45,7 +45,7 @@
     "@octokit/rest": "^21.0.2",
     "dedent-js": "^1.0.1",
     "handlebars": "^4.7.8",
-    "yaml": "^2.5.1"
+    "yaml": "^2.6.0"
   },
   "devDependencies": {
     "@octokit/openapi-types": "^22.2.0",
