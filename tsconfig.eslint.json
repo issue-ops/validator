@@ -9,7 +9,9 @@
     "__fixtures__",
     "__mocks__",
     "__tests__",
+    ".github/validator/team.js",
     "src",
+    "eslint.config.mjs",
     "jest.config.ts",
     "rollup.config.ts"
   ]

@@ -38752,6 +38752,7 @@ var Handlebars = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 /**
  * A custom Handlebars helper to nicely format newlines in markdown
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 Handlebars.registerHelper('newlines', (input) => {
     if (typeof input !== 'string')
         return JSON.stringify(input);
@@ -38768,7 +38769,7 @@ Handlebars.registerHelper('newlines', (input) => {
 function compileTemplate(template, ctx) {
     // Load the template
     const templateFile = fs.readFileSync(template, 'utf8');
-    // eslint-disable-next-line no-undef
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const compiledTemplate = Handlebars.compile(templateFile);
     return dedent(compiledTemplate(ctx));
 }
