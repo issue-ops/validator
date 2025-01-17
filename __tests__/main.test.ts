@@ -7,6 +7,7 @@ import * as octokit from '../__fixtures__/octokit.js'
 const compileTemplateSpy = jest.fn()
 const validateSpy = jest.fn()
 const parseTemplateSpy = jest.fn()
+const getCommentIdSpy = jest.fn()
 
 jest.unstable_mockModule('@actions/core', () => core)
 jest.unstable_mockModule('@octokit/rest', async () => {
@@ -28,6 +29,9 @@ jest.unstable_mockModule('../src/validate.js', () => ({
 }))
 jest.unstable_mockModule('../src/utils/parse.js', () => ({
   parseTemplate: parseTemplateSpy
+}))
+jest.unstable_mockModule('../src/comments.js', () => ({
+  getCommentId: getCommentIdSpy
 }))
 
 const main = await import('../src/main.js')
@@ -76,6 +80,7 @@ describe('main.ts', () => {
 
     parseTemplateSpy.mockReturnValue(JSON.parse(parsedTemplate))
     validateSpy.mockReturnValue([])
+    getCommentIdSpy.mockReturnValue(undefined)
   })
 
   afterEach(() => {
@@ -291,5 +296,48 @@ describe('main.ts', () => {
 
     expect(compileTemplateSpy).not.toHaveBeenCalledWith()
     expect(mocktokit.rest.issues.createComment).toHaveBeenCalled()
+  })
+
+  it('Updates an existing comment when add-comment is true', async () => {
+    getCommentIdSpy.mockReturnValue(1)
+
+    jest
+      .spyOn(fs, 'existsSync')
+      .mockImplementation((path: PathLike): boolean => {
+        switch (path) {
+          case `${process.cwd()}/.github/ISSUE_TEMPLATE/example-request.yml`:
+            return true
+          case `${process.cwd()}/.github/validator/success.mustache`:
+            return true
+          default:
+            return false
+        }
+      })
+
+    jest
+      .spyOn(fs, 'readFileSync')
+      .mockImplementation((path: PathOrFileDescriptor): string => {
+        switch (path) {
+          case `${process.cwd()}/.github/ISSUE_TEMPLATE/example-request.yml`:
+            return template
+          case `${process.cwd()}/.github/validator/success.mustache`:
+            return successMustache
+          default:
+            return ''
+        }
+      })
+
+    // Mock the validation errors.
+    jest.mocked(validateSpy).mockReturnValue([])
+
+    await main.run()
+
+    expect(compileTemplateSpy).toHaveBeenCalledWith(
+      `${process.cwd()}/.github/validator/success.mustache`,
+      {
+        issue: JSON.parse(parsedIssue)
+      }
+    )
+    expect(mocktokit.rest.issues.updateComment).toHaveBeenCalled()
   })
 })

@@ -1,6 +1,6 @@
-import dedent from 'dedent-js'
 import fs from 'fs'
 import Handlebars from 'handlebars'
+import { dedent } from 'ts-dedent'
 
 /**
  * A custom Handlebars helper to nicely format newlines in markdown

@@ -9,12 +9,15 @@
 
 Validate issue form submissions
 
-> [!IMPORTANT]
->
-> As of version `v2.0.0`, this action has been converted to ESM. Because of
-> this, custom validation scripts must be provided in ESM syntax. If you are
-> using CommonJS, you will need to convert your scripts to ESM. See
-> [`team.js`](./.github/validator/team.js) for an example.
+## Important Updates
+
+- As of version `v3`, this action now requires `issues: write` permissions to
+  read and write issue comments. This is because the action now updates the
+  **same** comment instead of adding new ones.
+- As of version `v2`, this action has been converted to ESM. Because of this,
+  custom validation scripts must be provided in ESM syntax. If you are using
+  CommonJS, you will need to convert your scripts to ESM. See
+  [`team.js`](./.github/validator/team.js) for an example.
 
 ## About
 
@@ -66,6 +69,12 @@ jobs:
     name: Validate Issue
     runs-on: ubuntu-latest
 
+    # These permissions are required to read custom validator scripts and
+    # write/update issue comments.
+    permissions:
+      contents: read
+      issues: write
+
     steps:
       # This is required to access the repository's files. Specifically, the
       # issue forms template and the additional validation configuration.
@@ -116,6 +125,12 @@ jobs:
   validate:
     name: Validate Issue with Custom Logic
     runs-on: ubuntu-latest
+
+    # These permissions are required to read custom validator scripts and
+    # write/update issue comments.
+    permissions:
+      contents: read
+      issues: write
 
     steps:
       # This is required to access the repository's files. Specifically, the

@@ -1,6 +1,9 @@
 import * as core from '@actions/core'
 import { Octokit } from '@octokit/rest'
 import fs from 'fs'
+import { dedent } from 'ts-dedent'
+import { getCommentId } from './comments.js'
+import { COMMENT_IDENTIFIER } from './constants.js'
 import { FormattedField, ParsedBody } from './interfaces.js'
 import { compileTemplate } from './utils/compile.js'
 import { parseTemplate } from './utils/parse.js'
@@ -66,6 +69,9 @@ export async function run(): Promise<void> {
   if (addComment) {
     core.info('Adding comment to issue...')
 
+    // Check if there is an existing comment with the identifier.
+    const commentId = await getCommentId(token, owner, repo, issueNumber)
+
     if (errors.length > 0) {
       // Add a comment to the issue with the error(s).
       if (fs.existsSync(`${workspace}/.github/validator/failure.mustache`)) {
@@ -98,14 +104,29 @@ export async function run(): Promise<void> {
       }
     }
 
+    // Add the identifier to the comment body.
+    body += dedent`
+
+    This comment will be automatically updated the next time the validator runs.
+    ${COMMENT_IDENTIFIER}`
+
     const octokit = new Octokit({ auth: token })
 
-    await octokit.rest.issues.createComment({
-      body,
-      issue_number: issueNumber,
-      owner,
-      repo
-    })
+    if (commentId !== undefined) {
+      await octokit.rest.issues.updateComment({
+        owner,
+        repo,
+        comment_id: commentId,
+        body
+      })
+    } else {
+      await octokit.rest.issues.createComment({
+        body,
+        issue_number: issueNumber,
+        owner,
+        repo
+      })
+    }
   }
 
   // Set outputs
