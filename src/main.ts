@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import { Octokit } from '@octokit/rest'
 import fs from 'fs'
-import { dedent } from 'ts-dedent'
 import { getCommentId } from './comments.js'
 import { COMMENT_IDENTIFIER } from './constants.js'
 import { FormattedField, ParsedBody } from './interfaces.js'
@@ -105,10 +104,7 @@ export async function run(): Promise<void> {
     }
 
     // Add the identifier to the comment body.
-    body += dedent`
-
-    This comment will be automatically updated the next time the validator runs.
-    ${COMMENT_IDENTIFIER}`
+    body += `\n\nThis comment will be automatically updated the next time the validator runs.\n\n${COMMENT_IDENTIFIER}`
 
     const octokit = new Octokit({ auth: token })
 
