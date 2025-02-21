@@ -219,9 +219,9 @@ The content of the file should follow the below format:
 ```yaml
 validators:
   - field: read-team
-    script: team
+    script: team.js
   - field: write-team
-    script: team
+    script: team.js
 ```
 
 | Property | Description                                                     |
