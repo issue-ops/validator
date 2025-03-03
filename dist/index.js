@@ -27307,9 +27307,9 @@ function addQueryParameters$1(url, parameters) {
 }
 
 // pkg/dist-src/util/extract-url-variable-names.js
-var urlVariableRegex$1 = /\{[^}]+\}/g;
+var urlVariableRegex$1 = /\{[^{}}]+\}/g;
 function removeNonChars$1(variableName) {
-  return variableName.replace(/^\W+|\W+$/g, "").split(/,/);
+  return variableName.replace(/(?:^\W+)|(?:(?<!\W)\W+$)/g, "").split(/,/);
 }
 function extractUrlVariableNames$1(url) {
   const matches = url.match(urlVariableRegex$1);
@@ -27495,7 +27495,7 @@ function parse$2(options) {
     }
     if (url.endsWith("/graphql")) {
       if (options.mediaType.previews?.length) {
-        const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
+        const previewsFromAcceptHeader = headers.accept.match(/(?<![\w-])[\w-]+(?=-preview)/g) || [];
         headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map((preview) => {
           const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
           return `application/vnd.github.${preview}-preview${format}`;
@@ -27755,7 +27755,7 @@ let RequestError$1 = class RequestError extends Error {
     if (options.request.headers.authorization) {
       requestCopy.headers = Object.assign({}, options.request.headers, {
         authorization: options.request.headers.authorization.replace(
-          / .*$/,
+          /(?<! ) .*$/,
           " [REDACTED]"
         )
       });
@@ -27849,7 +27849,7 @@ async function fetchWrapper$1(requestOptions) {
     data: ""
   };
   if ("deprecation" in responseHeaders) {
-    const matches = responseHeaders.link && responseHeaders.link.match(/<([^>]+)>; rel="deprecation"/);
+    const matches = responseHeaders.link && responseHeaders.link.match(/<([^<>]+)>; rel="deprecation"/);
     const deprecationLink = matches && matches.pop();
     log.warn(
       `[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${responseHeaders.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`
@@ -28116,7 +28116,7 @@ var createTokenAuth$1 = function createTokenAuth2(token) {
   });
 };
 
-const VERSION$a = "6.1.3";
+const VERSION$a = "6.1.4";
 
 const noop$1 = () => {
 };
@@ -28316,7 +28316,7 @@ function iterator$1(octokit, route, parameters) {
           const response = await requestMethod({ method, url, headers });
           const normalizedResponse = normalizePaginatedListResponse$1(response);
           url = ((normalizedResponse.headers.link || "").match(
-            /<([^>]+)>;\s*rel="next"/
+            /<([^<>]+)>;\s*rel="next"/
           ) || [])[1];
           return { value: normalizedResponse };
         } catch (error) {
@@ -30582,7 +30582,7 @@ function legacyRestEndpointMethods$1(octokit) {
 }
 legacyRestEndpointMethods$1.VERSION = VERSION$7;
 
-const VERSION$6 = "21.1.0";
+const VERSION$6 = "21.1.1";
 
 const Octokit$1 = Octokit$2.plugin(requestLog, legacyRestEndpointMethods$1, paginateRest$1).defaults(
   {
