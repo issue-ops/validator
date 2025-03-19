@@ -46,6 +46,13 @@ export async function validate(
   )
 
   for (const validator of config.validators) {
+    if (Object.keys(issue).includes(validator.field) === false) {
+      core.info(
+        `Field '${validator.field}' not found in issue, skipping validator`
+      )
+      continue
+    }
+
     core.info(
       `Running custom validator '${validator.script}' on '${validator.field}'`
     )

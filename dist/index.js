@@ -50746,6 +50746,10 @@ async function validate(template, issue, workspace) {
     // Read validator config from ./.github/validator/config.yml
     const config = YAML.parse(fs.readFileSync(`${workspace}/.github/validator/config.yml`, 'utf8'));
     for (const validator of config.validators) {
+        if (Object.keys(issue).includes(validator.field) === false) {
+            coreExports.info(`Field '${validator.field}' not found in issue, skipping validator`);
+            continue;
+        }
         coreExports.info(`Running custom validator '${validator.script}' on '${validator.field}'`);
         // Import the script for the validator
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
