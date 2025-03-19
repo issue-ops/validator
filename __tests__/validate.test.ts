@@ -185,4 +185,36 @@ describe('validate()', () => {
 
     existsSyncSpy.mockRestore()
   })
+
+  it('Skips running custom validators for fields not in the issue', async () => {
+    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true)
+    const fsReadFileSyncSpy = jest
+      .spyOn(fs, 'readFileSync')
+      .mockReturnValue('validators:\n  - field: test\n    script: test.js\n')
+
+    const errors: string[] = await validate(
+      {
+        'read-team': {
+          label: 'test',
+          type: 'input',
+          required: true
+        },
+        'write-team': {
+          label: 'test',
+          type: 'input',
+          required: true
+        }
+      },
+      {
+        'read-team': 'IssueOps-Demo-Readers',
+        'write-team': 'IssueOps-Demo-Writers'
+      },
+      process.cwd()
+    )
+
+    expect(errors).toEqual([])
+
+    existsSyncSpy.mockRestore()
+    fsReadFileSyncSpy.mockRestore()
+  })
 })
