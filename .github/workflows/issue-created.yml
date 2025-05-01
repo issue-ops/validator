@@ -59,7 +59,7 @@ jobs:
       # to validate that teams specified in the issue body actually exist.
       - name: Generate App Token
         id: token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.ISSUEOPS_DEMO_APP_ID }}
           private-key: ${{ secrets.ISSUEOPS_DEMO_APP_KEY }}
