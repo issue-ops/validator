@@ -183,6 +183,8 @@ jobs:
 | --------------------- | --------------------------------------------------- |
 | `add-comment`         | Add a [success/failure comment](#comment-templates) |
 |                       | Default: `true`                                     |
+| `api_url`             | The GitHub API URL to use                           |
+|                       | Default: `${{ github.api_url }}`                    |
 | `github-token`        | GitHub PAT for authentication                       |
 |                       | Default: `${{ github.token }}`                      |
 | `issue-form-template` | Template `.yml` file in `.github/ISSUE_TEMPLATE`    |

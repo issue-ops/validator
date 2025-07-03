@@ -34600,7 +34600,9 @@ const COMMENT_IDENTIFIER = `<!-- validator: workflow=${githubExports.context.wor
  * @returns The ID of the previous validator result comment, or undefined
  */
 async function getCommentId(token, owner, repo, issueNumber) {
-    const octokit = githubExports.getOctokit(token);
+    const octokit = githubExports.getOctokit(token, {
+        baseUrl: coreExports.getInput('api_url', { required: true })
+    });
     // If no existing comment is found, set the result to undefined.
     let commentId = undefined;
     const response = await octokit.paginate(octokit.rest.issues.listComments, {
@@ -50838,6 +50840,7 @@ async function run() {
     const addComment = coreExports.getInput('add-comment', {
         required: true
     }) === 'true';
+    const apiUrl = coreExports.getInput('api_url', { required: true });
     const issueNumber = parseInt(coreExports.getInput('issue-number', { required: true }), 10);
     const parsedIssue = JSON.parse(coreExports.getInput('parsed-issue-body', { required: true }));
     const repository = coreExports.getInput('repository', {
@@ -50853,6 +50856,7 @@ async function run() {
     const repo = repository.split('/')[1];
     coreExports.info('Running action with the following inputs:');
     coreExports.info(`  addComment: ${addComment}`);
+    coreExports.info(`  apiUrl: ${apiUrl}`);
     coreExports.info(`  issueNumber: ${issueNumber}`);
     coreExports.info(`  parsedIssue: ${JSON.stringify(parsedIssue)}`);
     coreExports.info(`  repository: ${repository}`);
@@ -50903,7 +50907,7 @@ async function run() {
         }
         // Add the identifier to the comment body.
         body += `\n\nThis comment will be automatically updated the next time the validator runs.\n\n${COMMENT_IDENTIFIER}`;
-        const octokit = new Octokit$1({ auth: token });
+        const octokit = new Octokit$1({ auth: token, baseUrl: apiUrl });
         if (commentId !== undefined) {
             await octokit.rest.issues.updateComment({
                 owner,

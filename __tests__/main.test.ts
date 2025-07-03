@@ -71,6 +71,7 @@ describe('main.ts', () => {
 
     core.getInput
       .mockReturnValueOnce('true') // add-comment
+      .mockReturnValueOnce('https://api.github.com') // api_url
       .mockReturnValueOnce('1') // issue-number
       .mockReturnValueOnce(parsedIssue) // parsed-issue-body
       .mockReturnValueOnce('issue-ops/validator') // repository
@@ -115,6 +116,7 @@ describe('main.ts', () => {
     core.getInput
       .mockReset()
       .mockReturnValueOnce('false') // add-comment
+      .mockReturnValueOnce('https://api.github.com') // api_url
       .mockReturnValueOnce('1') // issue-number
       .mockReturnValueOnce(parsedIssue) // parsed-issue-body
       .mockReturnValueOnce('issue-ops/validator') // repository

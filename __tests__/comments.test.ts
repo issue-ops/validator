@@ -1,7 +1,9 @@
 import { jest } from '@jest/globals'
+import * as core from '../__fixtures__/core.js'
 import * as github from '../__fixtures__/github.js'
 import * as octokit from '../__fixtures__/octokit.js'
 
+jest.unstable_mockModule('@actions/core', () => core)
 jest.unstable_mockModule('@actions/github', () => github)
 jest.unstable_mockModule('@octokit/rest', async () => {
   class Octokit {
@@ -24,6 +26,10 @@ const { Octokit } = await import('@octokit/rest')
 const mocktokit = jest.mocked(new Octokit())
 
 describe('getCommentId()', () => {
+  beforeEach(() => {
+    core.getInput.mockReset().mockReturnValueOnce('https://api.github.com')
+  })
+
   afterEach(() => {
     jest.resetAllMocks()
   })

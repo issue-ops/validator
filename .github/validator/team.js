@@ -38,7 +38,8 @@ export default async (field) => {
   // you will need to set the authentication token for the GitHub API so you can
   // read GitHub Teams in your organization.
   const github = new Octokit({
-    auth: core.getInput('github-token', { required: true })
+    auth: core.getInput('github-token', { required: true }),
+    baseUrl: core.getInput('api_url', { required: true })
   })
 
   // In this validator, the only type of input we are expecting is a `string` (a
