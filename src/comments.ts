@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { COMMENT_IDENTIFIER } from './constants.js'
 
@@ -14,7 +15,9 @@ export async function getCommentId(
   repo: string,
   issueNumber: number
 ): Promise<number | undefined> {
-  const octokit = github.getOctokit(token)
+  const octokit = github.getOctokit(token, {
+    baseUrl: core.getInput('api_url', { required: true })
+  })
 
   // If no existing comment is found, set the result to undefined.
   let commentId: number | undefined = undefined

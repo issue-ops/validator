@@ -11,6 +11,10 @@ inputs:
     description: Whether to comment on the issue with a success/failure message
     required: false
     default: 'true'
+  api_url:
+    description: The GitHub API URL to use.
+    required: false
+    default: ${{ github.api_url }}
   github-token:
     description: The GitHub API token to use
     required: false

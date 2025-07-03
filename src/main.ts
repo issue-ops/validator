@@ -17,6 +17,7 @@ export async function run(): Promise<void> {
     core.getInput('add-comment', {
       required: true
     }) === 'true'
+  const apiUrl: string = core.getInput('api_url', { required: true })
   const issueNumber: number = parseInt(
     core.getInput('issue-number', { required: true }),
     10
@@ -40,6 +41,7 @@ export async function run(): Promise<void> {
 
   core.info('Running action with the following inputs:')
   core.info(`  addComment: ${addComment}`)
+  core.info(`  apiUrl: ${apiUrl}`)
   core.info(`  issueNumber: ${issueNumber}`)
   core.info(`  parsedIssue: ${JSON.stringify(parsedIssue)}`)
   core.info(`  repository: ${repository}`)
@@ -106,7 +108,7 @@ export async function run(): Promise<void> {
     // Add the identifier to the comment body.
     body += `\n\nThis comment will be automatically updated the next time the validator runs.\n\n${COMMENT_IDENTIFIER}`
 
-    const octokit = new Octokit({ auth: token })
+    const octokit = new Octokit({ auth: token, baseUrl: apiUrl })
 
     if (commentId !== undefined) {
       await octokit.rest.issues.updateComment({
