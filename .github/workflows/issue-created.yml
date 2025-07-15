@@ -61,8 +61,8 @@ jobs:
         id: token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.ISSUEOPS_DEMO_APP_ID }}
-          private-key: ${{ secrets.ISSUEOPS_DEMO_APP_KEY }}
+          app-id: ${{ vars.ISSUEOPS_APP_ID }}
+          private-key: ${{ secrets.ISSUEOPS_APP_PRIVATE_KEY }}
 
       # Validate the parsed issue body against the issue form template and any
       # custom validation scripts. You can also pass in additional inputs as
