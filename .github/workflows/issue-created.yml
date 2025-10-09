@@ -77,9 +77,3 @@ jobs:
           issue-form-template: example-request.yml
           parsed-issue-body: ${{ steps.parse.outputs.json }}
           workspace: ${{ github.workspace }}
-
-      - name: Output Validation Results
-        id: output
-        run: |
-          echo "Result: ${{ steps.validate.outputs.result }}"
-          echo "Errors: ${{ steps.validate.outputs.errors }}"
