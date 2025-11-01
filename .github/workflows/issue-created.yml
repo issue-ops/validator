@@ -33,7 +33,7 @@ jobs:
       # will need to install them. First, setup Node.js on the runner.
       - name: Setup Node.js
         id: setup-node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: npm
