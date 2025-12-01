@@ -27,7 +27,7 @@ jobs:
       # issue forms template and the additional validation configuration.
       - name: Checkout Repository
         id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # If your validation scripts include any third-party dependencies, you
       # will need to install them. First, setup Node.js on the runner.
