@@ -43,7 +43,7 @@
     "@actions/core": "^3.0.0",
     "@actions/github": "^9.0.0",
     "@octokit/rest": "^22.0.1",
-    "handlebars": "^4.7.8",
+    "handlebars": "^4.7.9",
     "ts-dedent": "^2.2.0",
     "yaml": "^2.8.2"
   },
